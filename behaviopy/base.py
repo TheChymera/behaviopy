@@ -68,6 +68,6 @@ def raw(df_path):
 
 if __name__ == '__main__':
 	# corr_matrix("~/data/behaviour/Beh vs 18F Dis Ratio.csv")
-	regression_matrix("~/data/behaviour/Beh vs 18F Dis Ratio.csv")
+	regression_matrix("~/data/behaviour/Beh vs 18F Dis Ratio.csv", output="slope")
 	# raw("~/data/behaviour/Beh vs 18F Dis Ratio.csv")
 	plt.show()
