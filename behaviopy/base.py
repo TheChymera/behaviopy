@@ -46,43 +46,6 @@ def regression_matrix(df_path, output="pearson"):
 	cax = divider.append_axes("right", size="5%", pad=0.1)
 	cbar = fig.colorbar(im, cax=cax)
 
-def regression_matrix(df_path, roi_normalize=False):
-	df = pd.read_csv(df_path, index_col=0)
-
-	behaviour_cols=[u'assisted rearing', u'risk assesment', u'still', u'unassisted rearing', u'Objects', u'Exploration', u'Grooming',u'Exp - no wall', u'Rearing', u'Walking']
-	pet_cols = [u'Cortex', u'Hippocampus', u'Striatum', u'Thalamus', u'Hypothalamus', u'Superior Colliculus', u'Inferior Colliculus', u'Midbrain', u'Brain Stem']
-
-	if roi_normalize:
-		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
-
-	numeric_df = df._get_numeric_data()
-	cols = numeric_df.columns
-	mat = numeric_df.values
-
-	reg_matrix=np.zeros((len(cols),len(cols)))
-
-	counter = 0
-	for a, b in product(mat.T,mat.T):
-		slope, intercept, r_value, p_value, std_err = stats.linregress(a,b)
-		ix = counter // len(cols)
-		iy = counter % len(cols)
-		reg_matrix[ix,iy] = slope
-		counter += 1
-
-	dfc = pd.DataFrame(reg_matrix,cols,cols)
-	dfc = dfc.loc[behaviour_cols]
-	dfc = dfc[pet_cols]
-
-	fig, ax = plt.subplots(figsize=(10, 10))
-	im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.), cmap=cm.PiYG)
-	plt.xticks(range(len(pet_cols)), pet_cols, rotation='vertical')
-	plt.yticks(range(len(behaviour_cols)), behaviour_cols)
-	ax.grid(False)
-
-	divider = make_axes_locatable(ax)
-	cax = divider.append_axes("right", size="5%", pad=0.1)
-	cbar = fig.colorbar(im, cax=cax)
-
 def raw(df_path):
 	df = pd.read_csv(df_path, index_col=0)
 
