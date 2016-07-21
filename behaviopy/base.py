@@ -12,6 +12,9 @@ from itertools import product
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 
+behaviour_cols=[u'assisted rearing', u'risk assesment', u'still', u'unassisted rearing', u'Objects', u'Exploration', u'Grooming',u'Exp - no wall', u'Rearing', u'Walking']
+pet_cols = [u'Cortex', u'Hippocampus', u'Striatum', u'Thalamus', u'Hypothalamus', u'Superior Colliculus', u'Inferior Colliculus', u'Midbrain', u'Brain Stem']
+
 class MidpointNormalize(colors.Normalize):
 	def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
 		self.midpoint = midpoint
@@ -23,11 +26,11 @@ class MidpointNormalize(colors.Normalize):
 		x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
 		return np.ma.masked_array(np.interp(value, x, y))
 
-def regression_matrix(df_path, output="pearson"):
+def regression_matrix(df_path, output="pearson", roi_normalize=True):
 	df = pd.read_csv(df_path, index_col=0)
 
-	behaviour_cols=[u'assisted rearing', u'risk assesment', u'still', u'unassisted rearing', u'Objects', u'Exploration', u'Grooming',u'Exp - no wall', u'Rearing', u'Walking']
-	pet_cols = [u'Cortex', u'Hippocampus', u'Striatum', u'Thalamus', u'Hypothalamus', u'Superior Colliculus', u'Inferior Colliculus', u'Midbrain', u'Brain Stem']
+	if roi_normalize:
+		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
 
 	if output == "pearson":
 		dfc = df.corr()
