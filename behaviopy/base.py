@@ -1,4 +1,3 @@
-from string import letters
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -6,13 +5,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.cm as cm
 import matplotlib.colors as colors
-from matplotlib.mlab import bivariate_normal
-from itertools import product
 from matplotlib import rcParams
 import statsmodels.api as sm
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
-from copy import deepcopy
-
 
 rcParams.update({'figure.autolayout': True})
 
