@@ -93,13 +93,14 @@ def regression_and_scatter(df_path, x_name, y_names, roi_normalize=True, confide
 			ax.fill_between(x_pred, lower_pred, upper_pred, color=scatterplot_colors[ix], alpha=0.08)
 
 		data_points = ax.plot(x,y,'o',color=scatterplot_colors[ix],markeredgecolor=scatterplot_colors[ix])
+		ax.tick_params(axis="both",which="both",bottom="off",top="off",length=0)
 		ax.plot(x_pred, y_pred, '-', color=scatterplot_colors[ix], linewidth=2, label=y_name)
-	plt.legend()
+	plt.legend(loc="best")
 
 if __name__ == '__main__':
 	plt.style.use('ggplot')
 	datafile="~/data/behaviour/besh/Beh vs 18F Dis Ratio.csv"
 	# regression_matrix(datafile, output="pearson")
-	regression_matrix(datafile, output="slope")
-	# regression_and_scatter(datafile, "Objects", ["Thalamus","Striatum"])
+	# regression_matrix(datafile, output="slope")
+	regression_and_scatter(datafile, "Objects", ["Thalamus","Striatum","Hippocampus"])
 	plt.show()
