@@ -57,7 +57,7 @@ def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize
 	if behav_normalize:
 		df[behaviour_cols] = df[behaviour_cols].apply(lambda x: (x / x.mean()))
 
-	if output == "pearson":
+	if output == "pearsonr":
 		dfc = df.corr()
 		cmap = cm.PiYG
 	if output == "slope":
@@ -141,7 +141,7 @@ if __name__ == '__main__':
 	plt.style.use('ggplot')
 	# regression_matrix(datafile, output="p",roi_normalize=True, correction="fdr_bh")
 	# regression_matrix(datafile, output="p",roi_normalize=True)
-	regression_matrix("~/data/behaviour/besh/BP.csv", df_y_path="~/data/behaviour/besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearson",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/bp_r.pdf")
+	regression_matrix("~/data/behaviour/besh/BP.csv", df_y_path="~/data/behaviour/besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/bp_r.pdf")
 	# regression_matrix(datafile, output="slope",roi_normalize=True, behav_normalize=False)
 	# regression_and_scatter(datafile, "Objects", ["Thalamus","Striatum","Hippocampus"], roi_normalize=False)
 	# plt.show()
