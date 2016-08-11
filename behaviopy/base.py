@@ -15,6 +15,7 @@ rcParams.update({
 	'font.family':'sans-serif',
 	'font.sans-serif':['Liberation Sans'],
 	})
+plt.style.use('ggplot')
 
 behaviour_cols=[u'Grooming', u'Objects', u'Assisted Rearing', u'Unassisted Rearing', u'Risk Assesment', u'Still', u'Walking']
 pet_cols = [u'Cortex', u'Hippocampus', u'Striatum', u'Thalamus', u'Hypothalamus', u'Superior Colliculus', u'Inferior Colliculus', u'Midbrain', u'Brain Stem']
@@ -93,8 +94,16 @@ def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize
 	if save_as:
 		plt.savefig(save_as,dpi=300)
 
-def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_normalize=True, confidence_intervals=False, prediction_intervals=False):
+def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_normalize=True, confidence_intervals=False, prediction_intervals=False, animals=None):
+
 	df = pd.read_csv(df_x_path, index_col=0)
+
+	if df_y_path:
+		dfy = pd.read_csv(df_y_path, index_col=0)
+		df = pd.concat([df, dfy], axis=1)
+
+	if animals:
+		df = df.loc[animals]
 
 	if roi_normalize:
 		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
@@ -102,6 +111,18 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 	fig, ax = plt.subplots()
 	ax.set_xmargin(0.1)
 	ax.set_ymargin(0.11)
+		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
+
+	fig, ax = plt.subplots()
+	ax.set_xmargin(0.1)
+	ax.set_ymargin(0.11)
+
+	for ix, y_name in enumerate(y_names):
+		x = df[[x_name]].values
+		y = df[[y_name]].values
+
+		x_ = sm.add_constant(x) # constant intercept term
+		model = sm.OLS(y, x_)
 
 	for ix, y_name in enumerate(y_names):
 		x = df[[x_name]].values
@@ -138,10 +159,6 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 	plt.legend(loc="best")
 
 if __name__ == '__main__':
-	plt.style.use('ggplot')
-	# regression_matrix(datafile, output="p",roi_normalize=True, correction="fdr_bh")
-	# regression_matrix(datafile, output="p",roi_normalize=True)
-	regression_matrix("~/data/behaviour/besh/BP.csv", df_y_path="~/data/behaviour/besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/bp_r.pdf")
-	# regression_matrix(datafile, output="slope",roi_normalize=True, behav_normalize=False)
-	# regression_and_scatter(datafile, "Objects", ["Thalamus","Striatum","Hippocampus"], roi_normalize=False)
-	# plt.show()
+	# regression_matrix("~/data/behaviour/besh/BP.csv", df_y_path="~/data/behaviour/besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/bp_r.pdf")
+	# regression_and_scatter("~/data/behaviour/besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/besh/DONOR.csv", roi_normalize=False)
+	plt.show()
