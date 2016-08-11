@@ -27,11 +27,13 @@ class MidpointNormalize(colors.Normalize):
 		x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
 		return np.ma.masked_array(np.interp(value, x, y))
 
-def regression_matrix(df_path, output="pearson", roi_normalize=True):
+def regression_matrix(df_path, output="pearson", roi_normalize=True, behav_normalize=False):
 	df = pd.read_csv(df_path, index_col=0)
 
 	if roi_normalize:
 		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
+	if behav_normalize:
+		df[behaviour_cols] = df[behaviour_cols].apply(lambda x: (x / x.mean()))
 
 	if output == "pearson":
 		dfc = df.corr()
@@ -45,6 +47,7 @@ def regression_matrix(df_path, output="pearson", roi_normalize=True):
 	plt.xticks(range(len(pet_cols)), pet_cols, rotation='vertical')
 	plt.yticks(range(len(behaviour_cols)), behaviour_cols)
 	ax.grid(False)
+	ax.tick_params(axis="both",which="both",bottom="off",top="off",length=0)
 
 	divider = make_axes_locatable(ax)
 	cax = divider.append_axes("right", size="5%", pad=0.1)
@@ -96,7 +99,7 @@ def regression_and_scatter(df_path, x_name, y_names, roi_normalize=True, confide
 if __name__ == '__main__':
 	plt.style.use('ggplot')
 	datafile="~/data/behaviour/besh/Beh vs 18F Dis Ratio.csv"
-	# corr_matrix("~/data/behaviour/Beh vs 18F Dis Ratio.csv")
-	# regression_matrix(datafile, output="slope")
-	regression_and_scatter(datafile, "Objects", ["Thalamus","Striatum"])
+	# regression_matrix(datafile, output="pearson")
+	regression_matrix(datafile, output="slope")
+	# regression_and_scatter(datafile, "Objects", ["Thalamus","Striatum"])
 	plt.show()
