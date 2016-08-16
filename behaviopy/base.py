@@ -20,7 +20,7 @@ plt.style.use('ggplot')
 behaviour_cols=[u'Grooming', u'Objects', u'Assisted Rearing', u'Unassisted Rearing', u'Risk Assesment', u'Still', u'Walking']
 pet_cols = [u'Cortex', u'Hippocampus', u'Striatum', u'Thalamus', u'Hypothalamus', u'Superior Colliculus', u'Inferior Colliculus', u'Midbrain', u'Brain Stem']
 
-scatterplot_colors = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
+qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
 class MidpointNormalize(colors.Normalize):
 	def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
@@ -147,15 +147,15 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 			conf = t * np.sqrt((s_err/(n-2))*(1.0/n + (np.power((x_pred-mean_x),2) / ((np.sum(np.power(x_pred,2))) - n*(np.power(mean_x,2))))))
 			upper_conf = y_pred + abs(conf)
 			lower_conf = y_pred - abs(conf)
-			ax.fill_between(x_pred, lower_conf, upper_conf, color=scatterplot_colors[ix], alpha=0.3)
+			ax.fill_between(x_pred, lower_conf, upper_conf, color=qualitative_colorset[ix], alpha=0.3)
 
 		if prediction_intervals:
 			sdev_pred, lower_pred, upper_pred = wls_prediction_std(fitted, exog=x_pred2, alpha=0.05)
-			ax.fill_between(x_pred, lower_pred, upper_pred, color=scatterplot_colors[ix], alpha=0.08)
+			ax.fill_between(x_pred, lower_pred, upper_pred, color=qualitative_colorset[ix], alpha=0.08)
 
-		data_points = ax.plot(x,y,'o',color=scatterplot_colors[ix],markeredgecolor=scatterplot_colors[ix])
+		data_points = ax.plot(x,y,'o',color=qualitative_colorset[ix],markeredgecolor=qualitative_colorset[ix])
 		ax.tick_params(axis="both",which="both",bottom="off",top="off",length=0)
-		ax.plot(x_pred, y_pred, '-', color=scatterplot_colors[ix], linewidth=2, label=y_name)
+		ax.plot(x_pred, y_pred, '-', color=qualitative_colorset[ix], linewidth=2, label=y_name)
 	plt.legend(loc="best")
 
 if __name__ == '__main__':
