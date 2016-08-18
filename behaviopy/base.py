@@ -20,8 +20,8 @@ rcParams.update({
 	'ytick.labelsize':'medium',
 	})
 
-behaviour_cols=[u'Assisted Rearing', u'Grooming', u'Objects', u'Risk Assesment', u'Still', u'Unassisted Rearing', u'Walking']
-pet_cols = [u'Cortex', u'Hippocampus', u'Striatum', u'Thalamus', u'Hypothalamus', u'Superior Colliculus', u'Inferior Colliculus', u'Midbrain', u'Brain Stem']
+behaviour_cols=[u'A. Rear.', u'Ambul.', u'Groom.', u'Immobile', u'Objects', u'U. Rear.', u'Risk']
+pet_cols = [u'Ctx', u'HPF', u'CPu', u'Tons', u'HTo', u'SC', u'IC', u'MB', u'BS']
 
 qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
@@ -167,8 +167,8 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 	plt.legend(loc="best")
 
 if __name__ == '__main__':
-	regression_matrix("~/data/behaviour/DA-PET-Besh/BP.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False, xlabel_rotation=45)
-	# regression_matrix("~/data/behaviour/DA-PET-Besh/BP.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/bp_r++.png", xlabel_rotation=45)
+	# regression_matrix("~/data/behaviour/DA-PET-Besh/BP.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False)
+	regression_matrix("~/data/behaviour/DA-PET-Besh/DVR.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/dvr_r+.png")
 	# regression_matrix("~/data/behaviour/DA-PET-Besh/DVR.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/dvr_r++.png", xlabel_rotation=45)
 	# regression_and_scatter("~/data/behaviour/DA-PET-Besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", roi_normalize=False)
 	plt.show()
