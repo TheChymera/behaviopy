@@ -10,14 +10,17 @@ import statsmodels.api as sm
 from statsmodels.sandbox.stats.multicomp import multipletests
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
+plt.style.use('ggplot')
 rcParams.update({
+	'font.size':18,
 	'figure.autolayout': True,
 	'font.family':'sans-serif',
 	'font.sans-serif':['Liberation Sans'],
+	'xtick.labelsize':'medium',
+	'ytick.labelsize':'medium',
 	})
-plt.style.use('ggplot')
 
-behaviour_cols=[u'Grooming', u'Objects', u'Assisted Rearing', u'Unassisted Rearing', u'Risk Assesment', u'Still', u'Walking']
+behaviour_cols=[u'Assisted Rearing', u'Grooming', u'Objects', u'Risk Assesment', u'Still', u'Unassisted Rearing', u'Walking']
 pet_cols = [u'Cortex', u'Hippocampus', u'Striatum', u'Thalamus', u'Hypothalamus', u'Superior Colliculus', u'Inferior Colliculus', u'Midbrain', u'Brain Stem']
 
 qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
@@ -42,7 +45,12 @@ def p_from_r(r,n):
 		prob = stats.betai(0.5*df, 0.5, df / (df + t_squared))
 	return prob
 
-def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize=True, behav_normalize=False, correction=None, animals=None, save_as=None):
+def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize=True, behav_normalize=False, correction=None, animals=None, save_as=None, xlabel_rotation="vertical"):
+
+	if xlabel_rotation != "vertical":
+		ha="left"
+	else:
+		ha="center"
 
 	df = pd.read_csv(df_x_path, index_col=0)
 
@@ -82,7 +90,7 @@ def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize
 		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.), cmap=cmap)
 	else:
 		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.05), cmap=cmap)
-	plt.xticks(range(len(pet_cols)), pet_cols, rotation='vertical')
+	plt.xticks(range(len(pet_cols)), pet_cols, rotation=xlabel_rotation, ha=ha)
 	plt.yticks(range(len(behaviour_cols)), behaviour_cols)
 	ax.grid(False)
 	ax.tick_params(axis="both",which="both",bottom="off",top="off",length=0)
@@ -92,7 +100,7 @@ def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize
 	cbar = fig.colorbar(im, cax=cax)
 
 	if save_as:
-		plt.savefig(save_as,dpi=300)
+		plt.savefig(save_as,dpi=300, transparent=True)
 
 def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_normalize=True, confidence_intervals=False, prediction_intervals=False, animals=None):
 
@@ -111,7 +119,7 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 	fig, ax = plt.subplots()
 	ax.set_xmargin(0.1)
 	ax.set_ymargin(0.11)
-		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
+	df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
 
 	fig, ax = plt.subplots()
 	ax.set_xmargin(0.1)
@@ -159,6 +167,8 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 	plt.legend(loc="best")
 
 if __name__ == '__main__':
-	# regression_matrix("~/data/behaviour/besh/BP.csv", df_y_path="~/data/behaviour/besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/bp_r.pdf")
-	# regression_and_scatter("~/data/behaviour/besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/besh/DONOR.csv", roi_normalize=False)
+	regression_matrix("~/data/behaviour/DA-PET-Besh/BP.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False, xlabel_rotation=45)
+	# regression_matrix("~/data/behaviour/DA-PET-Besh/BP.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/bp_r++.png", xlabel_rotation=45)
+	# regression_matrix("~/data/behaviour/DA-PET-Besh/DVR.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/dvr_r++.png", xlabel_rotation=45)
+	# regression_and_scatter("~/data/behaviour/DA-PET-Besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", roi_normalize=False)
 	plt.show()
