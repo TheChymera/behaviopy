@@ -111,11 +111,6 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 	fig, ax = plt.subplots()
 	ax.set_xmargin(0.1)
 	ax.set_ymargin(0.11)
-		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
-
-	fig, ax = plt.subplots()
-	ax.set_xmargin(0.1)
-	ax.set_ymargin(0.11)
 
 	for ix, y_name in enumerate(y_names):
 		x = df[[x_name]].values
@@ -160,5 +155,5 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 
 if __name__ == '__main__':
 	# regression_matrix("~/data/behaviour/besh/BP.csv", df_y_path="~/data/behaviour/besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/bp_r.pdf")
-	# regression_and_scatter("~/data/behaviour/besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/besh/DONOR.csv", roi_normalize=False)
+	regression_and_scatter("~/data/behaviour/DA-PET-Besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", roi_normalize=False)
 	plt.show()
