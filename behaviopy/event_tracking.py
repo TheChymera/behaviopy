@@ -1,6 +1,7 @@
 from psychopy import core, visual, data, event
 from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED, STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
 
+trial_duration = 10
 
 x0 = 0.
 x1 = 0.25
@@ -62,53 +63,42 @@ routineTimer = core.CountdownTimer()  # to track time remaining of each (non-sli
 t = 0
 trialClock.reset()  # clock
 frameN = -1
-continueRoutine = True
-routineTimer.add(30.000000)
 # update component parameters for each repeat
 # keep track of which components have finished
-trialComponents = [mov]
-for thisComponent in trialComponents:
-	if hasattr(thisComponent, 'status'):
-		thisComponent.status = NOT_STARTED
+mov.status = NOT_STARTED
+
+pre_evaluation = True
 
 # -------Start Routine "trial"-------
-while continueRoutine and routineTimer.getTime() > 0:
+while pre_evaluation or routineTimer.getTime() > 0:
+
+	print routineTimer.getTime()
+	resp_key = event.getKeys(keyList=['left','right','up','down','escape','return'])
+	if pre_evaluation:
+		if "return" in resp_key:
+			routineTimer.reset()  # clock
+			routineTimer.add(trial_duration)
+			pre_evaluation=False
+
 	# get current time
 	t = trialClock.getTime()
-	frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
-	# update/draw components on each frame
 
-	# *mov* updates
+	#start movie and keep track of start time
 	if t >= 0.0 and mov.status == NOT_STARTED:
-		# keep track of start time/frame for later
 		mov.tStart = t
-		mov.frameNStart = frameN  # exact frame index
 		mov.setAutoDraw(True)
-	frameRemains = 0.0 + 30.0- win.monitorFramePeriod * 0.75  # most of one frame period left
-	if mov.status == STARTED and t >= frameRemains:
-		mov.setAutoDraw(False)
 
-	# check if all components have finished
-	if not continueRoutine:  # a component has requested a forced-end of Routine
+	if mov.status == FINISHED:
 		break
-	continueRoutine = False  # will revert to True if at least one component still running
-	for thisComponent in trialComponents:
-		if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
-			continueRoutine = True
-			break  # at least one component has not yet finished
 
 	# check for quit (the Esc key)
-	if endExpNow or event.getKeys(keyList=["escape"]):
+	if endExpNow or "escape" in resp_key:
 		core.quit()
 
-	# refresh the screen
-	if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
-		win.flip()
+	win.flip()
 
 # -------Ending Routine "trial"-------
-for thisComponent in trialComponents:
-	if hasattr(thisComponent, "setAutoDraw"):
-		thisComponent.setAutoDraw(False)
+mov.setAutoDraw(False)
 # these shouldn't be strictly necessary (should auto-save)
 thisExp.saveAsWideText(filename+'.csv')
 thisExp.saveAsPickle(filename)
