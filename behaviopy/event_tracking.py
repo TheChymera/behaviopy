@@ -20,6 +20,11 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 	experiment_keylist = events.keys()
 	keylist.extend(experiment_keylist)
 
+	#set up evaluation data handling
+	trials = data.TrialHandler([{"a":"a"}], 1)
+	trials.data.addDataType('event')  # this will help store things with the stimuli
+	trials.data.addDataType('time')  # add as many types as you like
+
 	#process brackets string
 	x_y_brackets = bracket.split(",")
 	if len(x_y_brackets) == 1:
@@ -81,8 +86,6 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 	t = 0
 	trialClock.reset()  # clock
 	frameN = -1
-	# update component parameters for each repeat
-	# keep track of which components have finished
 	mov.status = NOT_STARTED
 
 	pre_evaluation = True
@@ -90,17 +93,22 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 	# -------Start Routine "trial"-------
 	while pre_evaluation or routineTimer.getTime() > 0:
 
+		# get current time
+		t = trialClock.getTime()
+
 		resp_key = event.getKeys(keyList=keylist)
 		if pre_evaluation:
 			if "return" in resp_key:
 				routineTimer.reset()  # clock
 				routineTimer.add(trial_duration)
 				pre_evaluation=False
-		else:
-			pass
+		elif resp_key:
+			if resp_key[0] in experiment_keylist:
+				trials.addData('event', resp_key[0])  # add the data to our set
+				trials.addData('time', t)
+				# trials.data.add('event', resp_key[0])  # add the data to our set
+				# trials.data.add('time', t)
 
-		# get current time
-		t = trialClock.getTime()
 
 		#start movie and keep track of start time
 		if t >= 0.0 and mov.status == NOT_STARTED:
@@ -116,18 +124,22 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 
 		win.flip()
 
+	print "AAAAAAAAAAAAAAAAAAAAAA"
+	a = trials.saveAsWideText("testDataWide.txt")
+	print a
 	# -------Ending Routine "trial"-------
 	mov.setAutoDraw(False)
 	# these shouldn't be strictly necessary (should auto-save)
-	thisExp.saveAsWideText(filename+'.csv')
-	thisExp.saveAsPickle(filename)
-	logging.flush()
+	# thisExp.saveAsWideText(filename+'.csv')
+	# thisExp.saveAsPickle(filename)
 	# make sure everything is closed down
-	thisExp.abort()  # or data files will save again on exit
+	# thisExp.abort()  # or data files will save again on exit
 	win.close()
 	core.quit()
+
+
 
 if __name__ == '__main__':
 	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
 	# recording_path = u"/home/chymera/data/cameras/nd750/a/.MOV/nd750_a0037.MOV"
-	evaluate(recording_path,10,events={"s":"swimming","f":"floating"}, bracket="0-0.25,", volume=0)
+	evaluate(recording_path,6,events={"s":"swimming","f":"floating"}, bracket="0-0.25,", volume=0)
