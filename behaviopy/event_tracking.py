@@ -1,6 +1,10 @@
+import csv
 import os
 from psychopy import core, visual, data, event
 from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED, STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
+
+def evaluate_db():
+	return
 
 def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 	"""Evaluate a behavioural recording.
@@ -21,9 +25,9 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 	keylist.extend(experiment_keylist)
 
 	#set up evaluation data handling
-	trials = data.TrialHandler([{"a":"a"}], 1)
-	trials.data.addDataType('event')  # this will help store things with the stimuli
-	trials.data.addDataType('time')  # add as many types as you like
+	# trials = data.TrialHandler([{"a":"a"}], 1)
+	# trials.data.addDataType('event')  # this will help store things with the stimuli
+	# trials.data.addDataType('time')  # add as many types as you like
 
 	#process brackets string
 	x_y_brackets = bracket.split(",")
@@ -51,9 +55,6 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 		units="norm",
 		)
 
-	aperture_x = 0.2
-	aperture_y = 1
-
 	# Initialize components for Routine "trial"
 	trialClock = core.Clock()
 	mov = visual.MovieStim(
@@ -74,8 +75,10 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 	mov.pos = (mov_xpos,mov_ypos)
 
 	#set aperture to bracket
-	aperture_x = movsection_xpos*2*mov_xsize
-	aperture_y = movsection_ypos*2*mov_ysize
+	movsection_xsize = x1-x0
+	movsection_ysize = y1-y0
+	aperture_x = movsection_xsize*mov_xsize
+	aperture_y = movsection_ysize*mov_ysize
 	aperture = visual.Aperture(win, size=(aperture_x,aperture_y), pos=(0, 0), ori=0, nVert=120, shape='square', inverted=False, name=None, autoLog=None)
 
 	# Create some handy timers
@@ -89,13 +92,11 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 	mov.status = NOT_STARTED
 
 	pre_evaluation = True
-
+	responses = []
 	# -------Start Routine "trial"-------
 	while pre_evaluation or routineTimer.getTime() > 0:
-
 		# get current time
 		t = trialClock.getTime()
-
 		resp_key = event.getKeys(keyList=keylist)
 		if pre_evaluation:
 			if "return" in resp_key:
@@ -104,8 +105,10 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 				pre_evaluation=False
 		elif resp_key:
 			if resp_key[0] in experiment_keylist:
-				trials.addData('event', resp_key[0])  # add the data to our set
-				trials.addData('time', t)
+				tempArray = [t, events[resp_key[0]]]
+				responses.append(tempArray)
+				# trials.addData('event', resp_key[0])  # add the data to our set
+				# trials.addData('time', t)
 				# trials.data.add('event', resp_key[0])  # add the data to our set
 				# trials.data.add('time', t)
 
@@ -124,22 +127,25 @@ def evaluate(recording_path, trial_duration, events={},bracket="", volume=1.):
 
 		win.flip()
 
-	print "AAAAAAAAAAAAAAAAAAAAAA"
-	a = trials.saveAsWideText("testDataWide.txt")
-	print a
-	# -------Ending Routine "trial"-------
-	mov.setAutoDraw(False)
-	# these shouldn't be strictly necessary (should auto-save)
-	# thisExp.saveAsWideText(filename+'.csv')
-	# thisExp.saveAsPickle(filename)
-	# make sure everything is closed down
-	# thisExp.abort()  # or data files will save again on exit
+	print responses
+	outputWriter1 = csv.writer(open('/home/chymera/src/behaviopy/behaviopy/fileName.csv','w'), lineterminator ='\n')
+	for i in range(0, len(responses)):
+		outputWriter1.writerow(responses[i])
+	# trials.printAsText(stimOut=['a'],dataOut=['event', 't'])
+	# a = trials.saveAsWideText("testDataWide.txt")
+	# print a
 	win.close()
-	core.quit()
-
-
 
 if __name__ == '__main__':
 	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
-	# recording_path = u"/home/chymera/data/cameras/nd750/a/.MOV/nd750_a0037.MOV"
-	evaluate(recording_path,6,events={"s":"swimming","f":"floating"}, bracket="0-0.25,", volume=0)
+	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0038.mkv"
+	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0039.mkv"
+	bracket = "0-.24,"
+	bracket = ".24-.42,"
+	bracket = ".42-.59,"
+	bracket = ".59-.77,"
+	bracket = ".77-1,"
+	bracket = ".4-.58,"
+	bracket = ".2-.4,"
+	bracket = ".58-.75,"
+	evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0)
