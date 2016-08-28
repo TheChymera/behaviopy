@@ -109,7 +109,7 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 
 	# Initialize components for Routine "trial"
 	trialClock = core.Clock()
-	mov = visual.MovieStim(
+	mov = visual.MovieStim2(
 		win=win, name='mov',
 		filename=recording_path,
 		depth=0.0,
@@ -120,6 +120,7 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 
 	#position video in order to center bracket
 	mov_xsize, mov_ysize = mov.size
+	print mov_xsize, mov_ysize
 	movsection_xpos = (x0+x1)/2.
 	movsection_ypos = (y0+y1)/2.
 	mov_xpos = mov_xsize*(1./2.-movsection_xpos)
@@ -185,6 +186,6 @@ if __name__ == '__main__':
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0038.mkv"
 	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0039.mkv"
-	bracket = "58-75,"
+	bracket = "40-58,"
 	evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.0001)
 	# evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[275511],author="chr",volume=0.0001)
