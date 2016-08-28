@@ -74,7 +74,7 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 	output_path = os.path.expanduser(output_path)
 
 	if os.path.exists(output_path):
-		print("There is already a n evaluation file at "+output_path+". Please specify a different output path.")
+		print("There is already an evaluation file at "+output_path+". Please specify a different output path.")
 		return
 
 	keylist = ['left','right','up','down','escape','return']
@@ -109,7 +109,7 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 
 	# Initialize components for Routine "trial"
 	trialClock = core.Clock()
-	mov = visual.MovieStim2(
+	mov = visual.MovieStim(
 		win=win, name='mov',
 		filename=recording_path,
 		depth=0.0,
