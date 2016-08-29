@@ -3,7 +3,7 @@ import os
 from psychopy import core, visual, data, event
 from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED, STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
 
-def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", dates=[], output_dir="~/data/behaviour", author="", volume=0):
+def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", dates=[], evaluations_dir="~/data/behaviour", author="", volume=0):
 	"""Wrapper for evaluate() passing data from a LabbookDB model database.
 
 	"""
@@ -15,11 +15,12 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 		print("It is advisable to add your name's three-letter abbreviation via the \"author\" argument. This helps identify your work and protects it from being overwritten.")
 
 	db_path = os.path.expanduser(db_path)
-	output_dir = os.path.expanduser(output_dir)
+	evaluations_dir = os.path.expanduser(evaluations_dir)
 
 	if test_type == "forced_swim_test":
 		measurements_table = "ForcedSwimTestMeasurement"
-		output_dir = os.path.join(output_dir,"forced_swim_test")
+		if os.path.basename(os.path.normpath(evaluations_dir)) != forced_swim_test:
+			evaluations_dir = os.path.join(evaluations_dir,"forced_swim_test")
 		trial_duration = 360 #in seconds
 		events = {"s":"swimming","f":"floating"}
 	else:
@@ -55,7 +56,7 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 		else:
 			bracket = ""
 		outfile_name = os.path.splitext(os.path.basename(recording_path))[0]+"_"+bracket+"_"+author
-		output_path = os.path.join(output_dir,outfile_name)
+		output_path = os.path.join(evaluations_dir,outfile_name)
 		evaluate(recording_path,trial_duration,events=events,bracket=bracket, volume=volume, output_path=output_path)
 
 def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", volume=1.,output_path="~/evaluation.csv"):
@@ -109,7 +110,7 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 
 	# Initialize components for Routine "trial"
 	trialClock = core.Clock()
-	mov = visual.MovieStim2(
+	mov = visual.MovieStim(
 		win=win, name='mov',
 		filename=recording_path,
 		depth=0.0,
@@ -177,7 +178,6 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 
 		win.flip()
 
-
 	for i in range(0, len(responses)):
 		(responses[i])
 	win.close()
@@ -187,5 +187,5 @@ if __name__ == '__main__':
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0038.mkv"
 	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0039.mkv"
 	bracket = "40-58,"
-	evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.0001)
+	evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.1)
 	# evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[275511],author="chr",volume=0.0001)
