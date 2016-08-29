@@ -38,7 +38,7 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 
 	filters = []
 	if animal_ids:
-		filter_entry = ["Animal",animals_id_column,]
+		filter_entry = ["Animal",animals_id_column]
 		for animal_id in animal_ids:
 			filter_entry.extend([animal_id])
 		filters.append(filter_entry)
@@ -48,7 +48,7 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 			filter_entry.extend([date])
 		filters.append(filter_entry)
 
-	reference_df = get_df(db_path,col_entries=col_entries, join_entries=join_entries, filters=[])
+	reference_df = get_df(db_path,col_entries=col_entries, join_entries=join_entries, filters=filters)
 	for _, measurement_df in reference_df.iterrows():
 		recording_path = measurement_df.loc[measurements_table+"_recording"]
 		if measurements_table+"_recording_bracket" in reference_df.columns:
@@ -196,7 +196,7 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={}, bracket="", 
 	win.close()
 
 if __name__ == '__main__':
-	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
+	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0038.mkv"
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0041.mkv"
 	# bracket = "40-58,"
