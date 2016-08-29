@@ -84,7 +84,7 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 
 	#process brackets string
 	x_y_brackets = bracket.split(",")
-	if len(x_y_brackets) == 1:
+	if len(x_y_brackets) == 1 and x_y_brackets != [""]:
 		x0, x1 = [float(i)/100 for i in x_y_brackets[0].split("-")]
 		y0 = 0.
 		y1 = 1.
@@ -99,6 +99,9 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 		except ValueError:
 			y0 = 0.
 			y1 = 1.
+	else:
+		x0 = y0 = 0.
+		x1 = y1 = 1.
 
 	win = visual.Window(
 		size=(2048, 1152), fullscr=True, screen=0,
@@ -116,12 +119,21 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 		depth=0.0,
 		volume=volume,
 		units="norm",
-		size=2,
 		)
+
+	#set full_movie dimensions based on aspect ratio (making one value from each operation float to ensure float division)
+	if float(mov.size[0])/mov.size[1] < float(win.size[0])/win.size[1]:
+		full_movie_y = 2.
+		full_movie_x = 2*float(win.size[1])/win.size[0]
+		print("a")
+	else:
+		full_movie_y = 2*float(win.size[1])/win.size[0]
+		full_movie_x = 2.
+		print("b")
+	mov.size=(full_movie_x, full_movie_y)
 
 	#position video in order to center bracket
 	mov_xsize, mov_ysize = mov.size
-	print mov_xsize, mov_ysize
 	movsection_xpos = (x0+x1)/2.
 	movsection_ypos = (y0+y1)/2.
 	mov_xpos = mov_xsize*(1./2.-movsection_xpos)
@@ -185,7 +197,8 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 if __name__ == '__main__':
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0038.mkv"
-	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0039.mkv"
+	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0041.mkv"
 	bracket = "40-58,"
-	evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.5)
+	bracket = ""
+	evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.01)
 	# evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[275511],author="chr",volume=0.0001)
