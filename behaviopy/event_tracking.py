@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 from psychopy import core, visual, data, event
 from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED, STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
 
@@ -21,6 +22,8 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 		measurements_table = "ForcedSwimTestMeasurement"
 		if os.path.basename(os.path.normpath(evaluations_dir)) != "forced_swim_test":
 			evaluations_dir = os.path.join(evaluations_dir,"forced_swim_test")
+		if not os.path.exists(evaluations_dir):
+			os.makedirs(evaluations_dir)
 		trial_duration = 360 #in seconds
 		events = {"s":"swimming","f":"floating"}
 	else:
@@ -181,7 +184,7 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={}, bracket="", 
 
 		#start movie and keep track of start time
 		if t >= 0.0 and mov.status == NOT_STARTED:
-			mov.tStart = t
+			mov.tStart = T
 			mov.setAutoDraw(True)
 
 		if mov.status == FINISHED:
@@ -193,7 +196,10 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={}, bracket="", 
 
 		win.flip()
 
+	if mov.status != FINISHED:
+		mov.setAutoDraw(False)
 	win.close()
+	return
 
 if __name__ == '__main__':
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
@@ -202,4 +208,4 @@ if __name__ == '__main__':
 	# bracket = "40-58,"
 	# bracket = ""
 	# evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.01)
-	evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[275511],author="chr",volume=0.1)
+	evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[],author="chr",volume=0.1)
