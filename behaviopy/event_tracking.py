@@ -19,7 +19,7 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 
 	if test_type == "forced_swim_test":
 		measurements_table = "ForcedSwimTestMeasurement"
-		if os.path.basename(os.path.normpath(evaluations_dir)) != forced_swim_test:
+		if os.path.basename(os.path.normpath(evaluations_dir)) != "forced_swim_test":
 			evaluations_dir = os.path.join(evaluations_dir,"forced_swim_test")
 		trial_duration = 360 #in seconds
 		events = {"s":"swimming","f":"floating"}
@@ -59,7 +59,7 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 		output_path = os.path.join(evaluations_dir,outfile_name)
 		evaluate(recording_path,trial_duration,events=events,bracket=bracket, volume=volume, output_path=output_path)
 
-def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", volume=1.,output_path="~/evaluation.csv"):
+def evaluate(recording_path, trial_duration, skiptime=0, events={}, bracket="", volume=1.,output_path="~/evaluation", non_redundant=True):
 	"""Evaluate a behavioural recording.
 
 	Parameters
@@ -72,10 +72,10 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 	"""
 
 	recording_path = os.path.expanduser(recording_path)
-	output_path = os.path.expanduser(output_path)
+	csv_output_path = os.path.expanduser(output_path)+".csv"
 
-	if os.path.exists(output_path):
-		print("There is already an evaluation file at "+output_path+". Please specify a different output path.")
+	if os.path.exists(csv_output_path):
+		print("There is already an evaluation file at "+csv_output_path+". Please specify a different output path.")
 		return
 
 	keylist = ['left','right','up','down','escape','return']
@@ -124,15 +124,13 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 	#set full_movie dimensions based on aspect ratio (making one value from each operation float to ensure float division)
 	if float(mov.size[0])/mov.size[1] < float(win.size[0])/win.size[1]:
 		full_movie_y = 2.
-		full_movie_x = 2*float(win.size[1])/win.size[0]
-		print("a")
+		full_movie_x = 2*float(win.size[1])/win.size[0]/(float(mov.size[1])/mov.size[0])
 	else:
-		full_movie_y = 2*float(win.size[1])/win.size[0]
+		full_movie_y = 2*float(win.size[1])/win.size[0]/(float(mov.size[1])/mov.size[0])
 		full_movie_x = 2.
-		print("b")
 	mov.size=(full_movie_x, full_movie_y)
 
-	#position video in order to center bracket
+	#position video so as to center bracket
 	mov_xsize, mov_ysize = mov.size
 	movsection_xpos = (x0+x1)/2.
 	movsection_ypos = (y0+y1)/2.
@@ -148,33 +146,38 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 	aperture = visual.Aperture(win, size=(aperture_x,aperture_y), pos=(0, 0), ori=0, nVert=120, shape='square', inverted=False, name=None, autoLog=None)
 
 	# Create some handy timers
-	globalClock = core.Clock()  # to track the time since experiment started
-	routineTimer = core.CountdownTimer()  # to track time remaining of each (non-slip) routine
+	globalClock = core.Clock()  # to track the time since measurement started
+	trialClock = core.Clock()  # to track the time since measurement started
+	routineTimer = core.CountdownTimer()  # to track time remaining in the experiment
 
-	# ------Prepare to start Routine "trial"-------
-	t = 0
-	trialClock.reset()  # clock
-	frameN = -1
+	# prepare evaluation variables
 	mov.status = NOT_STARTED
-
 	pre_evaluation = True
-	outputWriter1 = csv.writer(open(output_path,'w'), lineterminator ='\n')
+	outputWriter1 = csv.writer(open(csv_output_path,'w'), lineterminator ='\n')
 	outputWriter1.writerow(["start","behaviour"])
-	# -------Start Routine "trial"-------
+	lastkey=""
+
+	# Start evaluation
+	globalClock.reset()
 	while pre_evaluation or routineTimer.getTime() > 0:
-		# get current time
+		T = globalClock.getTime()
 		t = trialClock.getTime()
 		resp_key = event.getKeys(keyList=keylist)
 		if pre_evaluation:
 			if "return" in resp_key:
-				routineTimer.reset()  # clock
+				trialClock.reset()
+				routineTimer.reset()
 				routineTimer.add(trial_duration)
 				pre_evaluation=False
 		elif resp_key:
 			if resp_key[0] in experiment_keylist:
-				tempArray = [t, events[resp_key[0]]]
-				outputWriter1.writerow(tempArray)
-				tempArray =[] #make sure no info persists
+				if non_redundant and resp_key[0] == lastkey:
+					pass
+				else:
+					tempArray = [t, events[resp_key[0]]]
+					outputWriter1.writerow(tempArray)
+					tempArray =[] # make sure no info persists
+					lastkey = resp_key[0]
 
 		#start movie and keep track of start time
 		if t >= 0.0 and mov.status == NOT_STARTED:
@@ -190,15 +193,13 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={},bracket="", v
 
 		win.flip()
 
-	for i in range(0, len(responses)):
-		(responses[i])
 	win.close()
 
 if __name__ == '__main__':
-	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
+	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0038.mkv"
-	recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0041.mkv"
-	bracket = "40-58,"
-	bracket = ""
-	evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.01)
-	# evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[275511],author="chr",volume=0.0001)
+	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0041.mkv"
+	# bracket = "40-58,"
+	# bracket = ""
+	# evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.01)
+	evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[275511],author="chr",volume=0.1)
