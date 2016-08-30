@@ -1,10 +1,11 @@
 import csv
 import os
 import sys
+import numpy as np
 from psychopy import core, visual, data, event
 from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED, STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
 
-def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", dates=[], evaluations_dir="~/data/behaviour", author="", volume=0):
+def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", dates=[], evaluations_dir="~/data/behaviour", author="", volume=0, random_order=True):
 	"""Wrapper for evaluate() passing data from a LabbookDB model database.
 
 	"""
@@ -52,6 +53,9 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 		filters.append(filter_entry)
 
 	reference_df = get_df(db_path,col_entries=col_entries, join_entries=join_entries, filters=filters)
+	if random_order:
+		reference_df = reference_df.iloc[np.random.permutation(len(reference_df))]
+
 	for _, measurement_df in reference_df.iterrows():
 		recording_path = measurement_df.loc[measurements_table+"_recording"]
 		if measurements_table+"_recording_bracket" in reference_df.columns:
