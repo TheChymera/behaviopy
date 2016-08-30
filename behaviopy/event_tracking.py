@@ -196,10 +196,13 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={}, bracket="", 
 
 		# check for quit (the Esc key)
 		if "escape" in resp_key:
+			outputWriter1.writerow([t, "QUIT"])
 			core.quit()
 
 		win.flip()
 
+
+	outputWriter1.writerow([t, "END"])
 	if mov.status != FINISHED:
 		mov.setAutoDraw(False)
 	win.close()
