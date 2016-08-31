@@ -26,7 +26,7 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 		if not os.path.exists(evaluations_dir):
 			os.makedirs(evaluations_dir)
 		trial_duration = 360 #in seconds
-		events = {"s":"swimming","f":"floating"}
+		events = {"s":"swimming","i":"immobility"}
 	else:
 		raise ValueError("The function does not support test_type=\'"+test_type+"\'.")
 
