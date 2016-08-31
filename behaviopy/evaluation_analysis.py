@@ -12,12 +12,14 @@ from query import get_df
 sns.set_style("darkgrid", {'legend.frameon': True})
 qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
-def plot_forced_swim_timecourse(reference_df, is_preformatted=False, plot_columns=[], legend_loc="best", rename_treatments={}, datacolumn_name="Immobility ratio", periodcolumn_name="Period [minute]", periods_label="", plotstyle="tsplot", plot_behaviour="immobility"):
+def plot_forced_swim_timecourse(reference_df, is_preformatted=False, plot_columns=[], legend_loc="best", rename_treatments={}, datacolumn_name="Immobility ratio", periodcolumn_name="Period [minute]", period_label="", plotstyle="tsplot", plot_behaviour="immobility"):
 	if not is_preformatted:
-		if periods == "minute":
-			df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods={0.5:[0,60],1.5:[60,120],2.5:[120,180],3.5:[180,240],4.5:[240,300],5.5:[300,360]})
-		elif periods == "2 minutes":
-			df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods={1:[0,120],3:[120,240],5:[240,360]})
+		if period_label == "interval [1 min]":
+			periods={1:[0,60],2:[60,120],3:[120,180],4:[180,240],5:[240,300],6:[300,360]}
+			df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods=periods, period_label=period_label)
+		elif period_label == "interval [2 min]":
+			periods={1:[0,120],2:[120,240],3:[240,360]}
+			df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods=periods, period_label=period_label)
 		else:
 			df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods=periods)
 	else:
@@ -26,13 +28,13 @@ def plot_forced_swim_timecourse(reference_df, is_preformatted=False, plot_column
 	plt.style.use('ggplot')
 	# sns.swarmplot(x="period", y="behaviour ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	if plotstyle == "tsplot":
-		sns.tsplot(time="period", value=plot_behaviour+" ratio", condition="treatment", unit="identifier", data=df, err_style="unit_traces", color=sns.color_palette(qualitative_colorset))
-		# sns.tsplot(time="period", value=plot_behaviour+" ratio", condition="treatment", unit="identifier", data=df, err_style="unit_traces", color=sns.color_palette(qualitative_colorset), interpolate=False)
+		myplot = sns.tsplot(time=period_label, value=plot_behaviour+" ratio", condition="treatment", unit="identifier", data=df, err_style="unit_traces", color=sns.color_palette(qualitative_colorset))
+		myplot.set_xticks(periods.keys())
 	# sns.swarmplot(x="period", y="behaviour ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset),)
 	# sns.pointplot(x="period", y="behaviour ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), legend_out=False)
 	plt.legend(loc=legend_loc)
 
-def plottable_sums(reference_df, behaviour, identifier_column="Animal_id", periods="", metadata_columns={"TreatmentProtocol_code":"treatment"}):
+def plottable_sums(reference_df, behaviour, identifier_column="Animal_id", periods="", period_label="period", metadata_columns={"TreatmentProtocol_code":"treatment"}):
 	identifiers = list(set(reference_df[identifier_column]))
 	evaluation_df = pd.DataFrame({})
 	for identifier in identifiers:
@@ -52,7 +54,7 @@ def plottable_sums(reference_df, behaviour, identifier_column="Animal_id", perio
 			except KeyError:
 				behaviour_ratio = 0
 			identifier_data[behaviour+" ratio"] = behaviour_ratio
-			identifier_data["period"] = period
+			identifier_data[period_label] = period
 			identifier_data["identifier"] = identifier
 			period_df_slice = pd.DataFrame(identifier_data, index=[identifier])
 			evaluation_df = pd.concat([evaluation_df, period_df_slice])
@@ -138,6 +140,6 @@ if __name__ == '__main__':
 	# filters = [["Treatment","start_date","2016,4,25,19,30","2016,5,19,23,5"]]
 	filters = [["Treatment","start_date","2016,4,25,19,30"]]
 	reference_df = get_df("~/syncdata/meta.db",col_entries=col_entries, join_entries=join_entries, filters=filters)
-	plot_forced_swim_timecourse(reference_df, legend_loc=4, periods="minute")
-	# plot_forced_swim_timecourse(reference_df, legend_loc=4, periods="2 minutes")
+	plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]")
+	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [2 min]")
 	plt.show()
