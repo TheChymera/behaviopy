@@ -24,8 +24,7 @@ def plot_forced_swim_ttest(reference_df, is_preformatted=False, legend_loc="best
 	sns.swarmplot(x=period_label, y=plot_behaviour+" ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	plt.legend(loc=legend_loc)
 
-	add_significance(-0.2,0.2,df,plot_behaviour+" ratio",[{period_label:"2 to 4","treatment":"cFluDW_"},{period_label:"2 to 4","treatment":"cFluDW"}])
-	add_significance(0.8,1.2,df,plot_behaviour+" ratio",[{period_label:"2 to 6","treatment":"cFluDW_"},{period_label:"2 to 6","treatment":"cFluDW"}])
+	add_significance(df, plot_behaviour+" ratio", compare="treatment", over=period_label)
 
 def plot_forced_swim_timecourse(reference_df, is_preformatted=False, legend_loc="best", rename_treatments={}, period_label="period", plotstyle="tsplot", plot_behaviour="immobility", periods={}):
 	if not is_preformatted:

@@ -68,8 +68,7 @@ def sucrosepreference_plot(reference_df, is_preformatted=False, plot_columns=[],
 	sns.swarmplot(x=period_label,y=datacolumn_name, hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	plt.legend(loc=legend_loc)
 
-	add_significance(-0.2,0.2,df,datacolumn_name,[{period_label:"0 to 2","treatment":"Control"},{period_label:"0 to 2","treatment":"Fluoxetine"}])
-	add_significance(0.8,1.2,df,datacolumn_name,[{period_label:"2 to 5","treatment":"Control"},{period_label:"2 to 5","treatment":"Fluoxetine"}])
+	add_significance(df, datacolumn_name, compare="treatment", over=period_label)
 
 if __name__ == '__main__':
 	col_entries=[
