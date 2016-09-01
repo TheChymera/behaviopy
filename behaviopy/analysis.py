@@ -155,6 +155,8 @@ if __name__ == '__main__':
 		("Treatment.protocol",),
 		]
 	filters = [["Treatment","start_date","2016,4,25,19,30","2016,5,19,23,5"]]
+	# filters = [["Treatment","start_date","2016,5,19,23,5"]]
+	# filters = [["Treatment","start_date","2016,4,25,19,30"]]
 	reference_df = get_df("~/syncdata/meta.db",col_entries=col_entries, join_entries=join_entries, filters=filters)
 
 	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]", plotstyle="pointplot")
