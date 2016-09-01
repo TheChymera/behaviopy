@@ -61,7 +61,7 @@ def plottable_sums(reference_df, behaviour, identifier_column="Animal_id", perio
 			sums = timedelta_sums(evaluation_path, index_name=identifier, period_start=period_start, period_end=period_end)
 			#We need to calculate this explicitly since the start/end of th experiment may not align perfecty with the theoretical period
 			real_period_duration = sums.sum(axis=1).values[0]
-			#if the behaviour key is not found, there was no of that type in the period
+			#if the behaviour key is not found, there was none of that behaviour type in the period
 			try:
 				behaviour_ratio = sums[behaviour].values[0]/real_period_duration
 			except KeyError:
@@ -160,8 +160,8 @@ if __name__ == '__main__':
 	reference_df = get_df("~/syncdata/meta.db",col_entries=col_entries, join_entries=join_entries, filters=filters)
 
 	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]", plotstyle="pointplot")
-	# plot_forced_swim_ttest(reference_df, legend_loc=4, periods={"2 to 4":[120,240], "2 to 6":[120,360]})
-	plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]")
+	plot_forced_swim_ttest(reference_df, legend_loc=4, periods={"2 to 4":[120,240], "2 to 6":[120,360]})
+	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]")
 	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [2 min]")
 
 	plt.show()

@@ -1,4 +1,5 @@
 __author__="Horea Christian"
+import collections
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -18,9 +19,9 @@ def add_significance(df, datacolumn, compare, over):
 	over: string
 		The column over which the plot is repeated. For each value in this column a new t-test is performed. NO correction is performed for multiple comparisons!
 	"""
-	
+
 	y, h, col = df[datacolumn].max() + 0.1, 0.1, '0.4'
-	comparisons = list(set(df[over]))
+	comparisons = list(collections.OrderedDict.fromkeys(df[over]))
 	compare_categories = list(set(df[compare]))
 	for ix, comparison in enumerate(comparisons):
 		compare_vals=[]
