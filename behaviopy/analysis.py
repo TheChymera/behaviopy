@@ -88,7 +88,9 @@ def timedelta_sums(evaluation_path, index_name="", period_start=False, period_en
 	index_name : string, optional
 		The name to add as an index of the retunred series (useful for concatenating multiple outputs)
 	period_start : float, optional
-		The timepoint
+		The timepoint at which the evaluation period for the timedelta sums starts.
+	period_end : float, optional
+		The timepoint at which the evaluation period for the timedelta sums ends.
 	"""
 
 	timedelta_df = timedeltas(evaluation_path, period_start=period_start, period_end=period_end)
@@ -99,15 +101,13 @@ def timedelta_sums(evaluation_path, index_name="", period_start=False, period_en
 	return sum_df
 
 def timedeltas(evaluation_path, period_start=False, period_end=False):
-	"""Return the per-behaviour sums of timedelta intervals.
+	"""Return per-behaviour timedelta intervals.
 
 	Parameters
 	----------
 
 	timedelta_df : pandas_dataframe
-		A pandas dataframe containing a "behaviour" and a "timedelta" column
-	index_name : string, optional
-		The name to add as an index of the retunred series (useful for concatenating multiple outputs)
+		A pandas dataframe containing a "behaviour" and a "start" column
 	period_start : float, optional
 		The timepoint at which the evaluation period for the timedelta starts.
 	period_end : float, optional
