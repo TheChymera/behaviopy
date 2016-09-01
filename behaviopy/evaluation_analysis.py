@@ -5,23 +5,14 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy import stats
+
+from utils import *
 
 sys.path.append(os.path.expanduser('~/src/LabbookDB/db/'))
 from query import get_df
 
 sns.set_style("darkgrid", {'legend.frameon': True})
 qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
-
-def add_significance(x1,x2,df, datacolumn, comparison):
-	y, h, col = df[datacolumn].max() + 0.1, 0.1, '0.4'
-	plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=1, c=col)
-	compare_values=[]
-	for i in comparison:
-		compare_values.append(df.loc[(df[list(i)] == pd.Series(i)).all(axis=1)][datacolumn])
-	_, p_value = stats.ttest_ind(*compare_values)
-	plt.text((x1+x2)*0.5, y+h, "p = {:.2g}".format(p_value), ha='center', va='bottom', color=col)
-
 
 def plot_forced_swim_ttest(reference_df, is_preformatted=False, legend_loc="best", rename_treatments={}, periods={"2 to 4":[120,240]}, period_label="interval [minutes]", plot_behaviour="immobility"):
 	if not is_preformatted:
