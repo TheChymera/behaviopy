@@ -158,8 +158,8 @@ if __name__ == '__main__':
 	reference_df = get_df("~/syncdata/meta.db",col_entries=col_entries, join_entries=join_entries, filters=filters)
 
 	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]", plotstyle="pointplot")
-	plot_forced_swim_ttest(reference_df, legend_loc=4, periods={"2 to 4":[120,240], "2 to 6":[120,360]})
-	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]")
+	# plot_forced_swim_ttest(reference_df, legend_loc=4, periods={"2 to 4":[120,240], "2 to 6":[120,360]})
+	plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]")
 	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [2 min]")
 
 	plt.show()
