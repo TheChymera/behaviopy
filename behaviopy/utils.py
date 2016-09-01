@@ -4,6 +4,20 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 def add_significance(df, datacolumn, compare, over):
+	"""Print significance level on 2-item comparison plots (also works with multiple 2-item comparisons)
+
+	Parameters
+	----------
+
+	df: pandas_dataframe
+		A long-format pandas dataframe containing the data used for the plot.
+	datacolumn: string
+		The column on which the plotted dimension is located.
+	compare: string
+		The column over which to perform the t-test comparison (the data frame MUST have two and only two values on this column).
+	over: string
+		The column over which the plot is repeated. For each value in this column a new t-test is performed. NO correction is performed for multiple comparisons!
+	"""
 	y, h, col = df[datacolumn].max() + 0.1, 0.1, '0.4'
 	comparisons = list(set(df[over]))
 	compare_categories = list(set(df[compare]))
