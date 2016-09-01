@@ -109,7 +109,9 @@ def timedeltas(evaluation_path, period_start=False, period_end=False):
 	index_name : string, optional
 		The name to add as an index of the retunred series (useful for concatenating multiple outputs)
 	period_start : float, optional
-		The timepoint
+		The timepoint at which the evaluation period for the timedelta starts.
+	period_end : float, optional
+		The timepoint at which the evaluation period for the timedelta ends.
 	"""
 
 	df = pd.read_csv(evaluation_path)
