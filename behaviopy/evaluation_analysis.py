@@ -50,8 +50,6 @@ def plot_forced_swim_timecourse(reference_df, is_preformatted=False, legend_loc=
 		df = reference_df
 
 	plt.style.use('ggplot')
-	# sns.swarmplot(x="period", y="behaviour ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
-	# sns.swarmplot(x="period", y="behaviour ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset),)
 	if plotstyle == "tsplot":
 		myplot = sns.tsplot(time=period_label, value=plot_behaviour+" ratio", condition="treatment", unit="identifier", data=df, err_style="unit_traces", color=sns.color_palette(qualitative_colorset))
 		myplot.set_xticks(periods.keys())
@@ -166,8 +164,6 @@ if __name__ == '__main__':
 		("Cage.treatments",),
 		("Treatment.protocol",),
 		]
-	# filters = [["Treatment","start_date","2016,5,19,23,5"]]
-	# filters = [["Treatment","start_date","2016,4,25,19,30"]]
 	filters = [["Treatment","start_date","2016,4,25,19,30","2016,5,19,23,5"]]
 	reference_df = get_df("~/syncdata/meta.db",col_entries=col_entries, join_entries=join_entries, filters=filters)
 
