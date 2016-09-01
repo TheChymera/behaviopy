@@ -1,174 +1,165 @@
+__author__="Horea Christian"
+import os
+import sys
 import numpy as np
 import pandas as pd
-from scipy import stats
+import seaborn as sns
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import matplotlib.cm as cm
-import matplotlib.colors as colors
-from matplotlib import rcParams
-import statsmodels.api as sm
-from statsmodels.sandbox.stats.multicomp import multipletests
-from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
-plt.style.use('ggplot')
-rcParams.update({
-	'font.size':18,
-	'figure.autolayout': True,
-	'font.family':'sans-serif',
-	'font.sans-serif':['Liberation Sans'],
-	'xtick.labelsize':'medium',
-	'ytick.labelsize':'medium',
-	})
+from utils import *
 
-behaviour_cols=[u'A. Rear.', u'Ambul.', u'Groom.', u'Immobile', u'Objects', u'U. Rear.', u'Risk']
-pet_cols = [u'Ctx', u'HPF', u'CPu', u'Tons', u'HT', u'SC', u'IC', u'MB', u'BS']
+sys.path.append(os.path.expanduser('~/src/LabbookDB/db/'))
+from query import get_df
 
+sns.set_style("darkgrid", {'legend.frameon': True})
 qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
-class MidpointNormalize(colors.Normalize):
-	def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
-		self.midpoint = midpoint
-		colors.Normalize.__init__(self, vmin, vmax, clip)
-
-	def __call__(self, value, clip=None):
-		# Ignoring masked values and all kinds of edge cases...
-		x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
-		return np.ma.masked_array(np.interp(value, x, y))
-
-def p_from_r(r,n):
-	r = max(min(r, 1.0), -1.0)
-	df = n-2
-	if abs(r) == 1.0:
-		prob = 0.0
+def plot_forced_swim_ttest(reference_df, is_preformatted=False, legend_loc="best", rename_treatments={}, periods={"2 to 4":[120,240]}, period_label="interval [minutes]", plot_behaviour="immobility"):
+	if not is_preformatted:
+		df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods=periods, period_label=period_label)
 	else:
-		t_squared = r*r * (df / ((1.0 - r) * (1.0 + r)))
-		prob = stats.betai(0.5*df, 0.5, df / (df + t_squared))
-	return prob
+		df = reference_df
 
-def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize=True, behav_normalize=False, correction=None, animals=None, save_as=None, xlabel_rotation="vertical"):
+	plt.style.use('ggplot')
+	sns.swarmplot(x=period_label, y=plot_behaviour+" ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
+	plt.legend(loc=legend_loc)
 
-	if xlabel_rotation != "vertical":
-		ha="left"
+	add_significance(df, plot_behaviour+" ratio", compare="treatment", over=period_label)
+
+def plot_forced_swim_timecourse(reference_df, is_preformatted=False, legend_loc="best", rename_treatments={}, period_label="period", plotstyle="tsplot", plot_behaviour="immobility", periods={}):
+	if not is_preformatted:
+		if period_label == "interval [1 min]":
+			periods={1:[0,60],2:[60,120],3:[120,180],4:[180,240],5:[240,300],6:[300,360]}
+			df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods=periods, period_label=period_label)
+		elif period_label == "interval [2 min]":
+			periods={1:[0,120],2:[120,240],3:[240,360]}
+			df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods=periods, period_label=period_label)
+		else:
+			df = plottable_sums(reference_df, plot_behaviour, identifier_column="Animal_id", periods=periods)
 	else:
-		ha="center"
+		df = reference_df
 
-	df = pd.read_csv(df_x_path, index_col=0)
+	plt.style.use('ggplot')
+	if plotstyle == "tsplot":
+		myplot = sns.tsplot(time=period_label, value=plot_behaviour+" ratio", condition="treatment", unit="identifier", data=df, err_style="unit_traces", color=sns.color_palette(qualitative_colorset))
+		myplot.set_xticks(periods.keys())
+	elif plotstyle == "pointplot":
+		sns.pointplot(x=period_label, y=plot_behaviour+" ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), legend_out=False, dodge=0.1)
+	plt.legend(loc=legend_loc)
 
-	if df_y_path:
-		dfy = pd.read_csv(df_y_path, index_col=0)
-		df = pd.concat([df, dfy], axis=1)
+def plottable_sums(reference_df, behaviour, identifier_column="Animal_id", periods={}, period_label="period", metadata_columns={"TreatmentProtocol_code":"treatment"}):
+	identifiers = list(set(reference_df[identifier_column]))
+	evaluation_df = pd.DataFrame({})
+	for identifier in identifiers:
+		identifier_df = reference_df[reference_df[identifier_column]==identifier]
+		evaluation_path = identifier_df["Evaluation_path"].values[0]
+		identifier_data = {}
+		for metadata_column in metadata_columns:
+			identifier_data[metadata_columns[metadata_column]] = identifier_df[metadata_column].values[0]
+		for period in periods:
+			period_start, period_end = periods[period]
+			sums = timedelta_sums(evaluation_path, index_name=identifier, period_start=period_start, period_end=period_end)
+			#We need to calculate this explicitly since the start/end of th experiment may not align perfecty with the theoretical period
+			real_period_duration = sums.sum(axis=1).values[0]
+			#if the behaviour key is not found, there was no of that type in the period
+			try:
+				behaviour_ratio = sums[behaviour].values[0]/real_period_duration
+			except KeyError:
+				behaviour_ratio = 0
+			identifier_data[behaviour+" ratio"] = behaviour_ratio
+			identifier_data[period_label] = period
+			identifier_data["identifier"] = identifier
+			period_df_slice = pd.DataFrame(identifier_data, index=[identifier])
+			evaluation_df = pd.concat([evaluation_df, period_df_slice])
 
-	if animals:
-		df = df.loc[animals]
+	#data is usually ordered as it comes, for nicer plots we sort it here
+	evaluation_df = evaluation_df.sort_values([period_label], ascending=True)
+	evaluation_df = evaluation_df.sort_values(metadata_columns.values(), ascending=False)
+	return evaluation_df
 
-	if roi_normalize:
-		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
-	if behav_normalize:
-		df[behaviour_cols] = df[behaviour_cols].apply(lambda x: (x / x.mean()))
+def timedelta_sums(evaluation_path, index_name="", period_start=False, period_end=False):
+	"""Return the per-behaviour sums of timedelta intervals.
 
-	if output == "pearsonr":
-		dfc = df.corr()
-		cmap = cm.PiYG
-	if output == "slope":
-		dfc = df.corr() * (df.std().values / df.std().values[:, np.newaxis])
-		cmap = cm.PiYG
-	if output == "p":
-		n = len(df)
-		dfc = df.corr()
-		dfc = dfc.applymap(lambda x: p_from_r(x,n))
-		cmap = cm.BuPu_r
+	Parameters
+	----------
 
-	dfc = dfc.loc[behaviour_cols]
-	dfc = dfc[pet_cols]
+	timedelta_df : pandas_dataframe
+		A pandas dataframe containing a "behaviour" and a "timedelta" column
+	index_name : string, optional
+		The name to add as an index of the retunred series (useful for concatenating multiple outputs)
+	period_start : float, optional
+		The timepoint
+	"""
 
-	if output == "p" and correction:
-		dfc_corrected = multipletests(dfc.as_matrix().flatten(), alpha=0.05, method=correction)[1].reshape(np.shape(dfc))
-		dfc = pd.DataFrame(dfc_corrected, dfc.index, dfc.columns)
+	timedelta_df = timedeltas(evaluation_path, period_start=period_start, period_end=period_end)
+	sums = {}
+	for behaviour in list(set(timedelta_df["behaviour"])):
+		sums[behaviour] = timedelta_df.loc[timedelta_df["behaviour"] == behaviour, "timedelta"].sum()
+	sum_df = pd.DataFrame(sums, index=[index_name])
+	return sum_df
 
-	fig, ax = plt.subplots(figsize=(10, 10))
-	if output != "p":
-		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.), cmap=cmap)
-	else:
-		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.05), cmap=cmap)
-	plt.xticks(range(len(pet_cols)), pet_cols, rotation=xlabel_rotation, ha=ha)
-	plt.yticks(range(len(behaviour_cols)), behaviour_cols)
-	ax.grid(False)
-	ax.tick_params(axis="both",which="both",bottom="off",top="off",length=0)
+def timedeltas(evaluation_path, period_start=False, period_end=False):
+	"""Return the per-behaviour sums of timedelta intervals.
 
-	divider = make_axes_locatable(ax)
-	cax = divider.append_axes("right", size="5%", pad=0.05)
-	cbar = fig.colorbar(im, cax=cax)
+	Parameters
+	----------
 
-	if save_as:
-		plt.savefig(save_as,dpi=300, transparent=True)
+	timedelta_df : pandas_dataframe
+		A pandas dataframe containing a "behaviour" and a "timedelta" column
+	index_name : string, optional
+		The name to add as an index of the retunred series (useful for concatenating multiple outputs)
+	period_start : float, optional
+		The timepoint
+	"""
 
-def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_normalize=True, confidence_intervals=False, prediction_intervals=False, animals=None):
+	df = pd.read_csv(evaluation_path)
 
-	df = pd.read_csv(df_x_path, index_col=0)
+	#edit df to fit restricted summary period
+	if period_start:
+		cropped_df = df[df["start"] > period_start]
+		# we perform this check so that the period is not extended beyond the data range
+		if not len(cropped_df) == len(df):
+			startpoint_behaviour = list(df[df["start"] <= period_start].tail(1)["behaviour"])[0]
+			startpoint = pd.DataFrame({"start":period_start,"behaviour":startpoint_behaviour}, index=[""])
+			df = pd.concat([startpoint,cropped_df])
+	if period_end:
+		cropped_df = df[df["start"] < period_end]
+		# we perform this check so that the period is not extended beyond the data range
+		if not len(cropped_df) == len(df):
+			endpoint = pd.DataFrame({"start":period_end,"behaviour":"ANALYSIS_ENDPOINT"}, index=[""])
+			df = pd.concat([cropped_df,endpoint])
 
-	if df_y_path:
-		dfy = pd.read_csv(df_y_path, index_col=0)
-		df = pd.concat([df, dfy], axis=1)
+	# timedelta calculation
+	df["timedelta"] = (df["start"].shift(-1)-df["start"]).fillna(0)
 
-	if animals:
-		df = df.loc[animals]
+	#the last index gives the experiment end time, not meaningful behaviour. We remove that here.
+	df = df[:-1]
 
-	if roi_normalize:
-		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
-
-	fig, ax = plt.subplots()
-	ax.set_xmargin(0.1)
-	ax.set_ymargin(0.11)
-	df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
-
-	fig, ax = plt.subplots()
-	ax.set_xmargin(0.1)
-	ax.set_ymargin(0.11)
-
-	for ix, y_name in enumerate(y_names):
-		x = df[[x_name]].values
-		y = df[[y_name]].values
-
-		x_ = sm.add_constant(x) # constant intercept term
-		model = sm.OLS(y, x_)
-
-	for ix, y_name in enumerate(y_names):
-		x = df[[x_name]].values
-		y = df[[y_name]].values
-
-		x_ = sm.add_constant(x) # constant intercept term
-		model = sm.OLS(y, x_)
-		fitted = model.fit()
-		x_pred = np.linspace(x.min(), x.max(), 50)
-		x_pred2 = sm.add_constant(x_pred)
-		y_pred = fitted.predict(x_pred2)
-
-		y_hat = fitted.predict(x_)
-		y_err = y - y_hat
-		mean_x = x.mean()
-		n = len(x)
-		dof = n - fitted.df_model - 1
-		t = stats.t.ppf(0.05, df=dof)
-		s_err = np.sum(np.power(y_err, 2))
-
-		if confidence_intervals:
-			conf = t * np.sqrt((s_err/(n-2))*(1.0/n + (np.power((x_pred-mean_x),2) / ((np.sum(np.power(x_pred,2))) - n*(np.power(mean_x,2))))))
-			upper_conf = y_pred + abs(conf)
-			lower_conf = y_pred - abs(conf)
-			ax.fill_between(x_pred, lower_conf, upper_conf, color=qualitative_colorset[ix], alpha=0.3)
-
-		if prediction_intervals:
-			sdev_pred, lower_pred, upper_pred = wls_prediction_std(fitted, exog=x_pred2, alpha=0.05)
-			ax.fill_between(x_pred, lower_pred, upper_pred, color=qualitative_colorset[ix], alpha=0.08)
-
-		data_points = ax.plot(x,y,'o',color=qualitative_colorset[ix],markeredgecolor=qualitative_colorset[ix])
-		ax.tick_params(axis="both",which="both",bottom="off",top="off",length=0)
-		ax.plot(x_pred, y_pred, '-', color=qualitative_colorset[ix], linewidth=2, label=y_name)
-	plt.legend(loc="best")
+	return df
 
 if __name__ == '__main__':
-	# regression_matrix("~/data/behaviour/DA-PET-Besh/BP.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False)
-	regression_matrix("~/data/behaviour/DA-PET-Besh/DVR.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/dvr_r.png")
-	# regression_matrix("~/data/behaviour/DA-PET-Besh/DVR.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/dvr_r++.png", xlabel_rotation=45)
-	# regression_and_scatter("~/data/behaviour/DA-PET-Besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", roi_normalize=False)
+	col_entries=[
+		("Animal","id"),
+		("Cage","id"),
+		("Treatment",),
+		("TreatmentProtocol","code"),
+		("ForcedSwimTestMeasurement",),
+		("Evaluation",),
+		]
+	join_entries=[
+		("Animal.cage_stays",),
+		("ForcedSwimTestMeasurement",),
+		("Evaluation",),
+		("CageStay.cage",),
+		("Cage.treatments",),
+		("Treatment.protocol",),
+		]
+	filters = [["Treatment","start_date","2016,4,25,19,30","2016,5,19,23,5"]]
+	reference_df = get_df("~/syncdata/meta.db",col_entries=col_entries, join_entries=join_entries, filters=filters)
+
+	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]", plotstyle="pointplot")
+	# plot_forced_swim_ttest(reference_df, legend_loc=4, periods={"2 to 4":[120,240], "2 to 6":[120,360]})
+	plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [1 min]")
+	# plot_forced_swim_timecourse(reference_df, legend_loc=4, period_label="interval [2 min]")
+
 	plt.show()
