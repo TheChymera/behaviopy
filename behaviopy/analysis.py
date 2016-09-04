@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from utils import *
 
-sys.path.append(os.path.expanduser('~/src/LabbookDB/db/'))
+sys.path.append(os.path.expanduser('~/src/LabbookDB/labbookdb/db'))
 from query import get_df
 
 sns.set_style("darkgrid", {'legend.frameon': True})
