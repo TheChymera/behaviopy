@@ -8,7 +8,7 @@ from os import path
 from sqlalchemy import create_engine, or_, inspection
 from sqlalchemy.orm import sessionmaker, aliased, with_polymorphic, joinedload_all
 
-from utils import *
+from .utils import *
 
 import seaborn as sns
 sns.set_style("white", {'legend.frameon': True})
