@@ -25,7 +25,15 @@ def sucrose_preference(df, columns=[], legend_loc="best", rename_treatments={}, 
 
 	add_significance(df, datacolumn_name, compare="treatment", over=period_label)
 
-def forced_swim_ttest(df, legend_loc="best", rename_treatments={}, periods={}, period_label="interval [minutes]", plot_behaviour="immobility", save_as=""):
+def forced_swim_ttest(df,
+	legend_loc="best",
+	rename_treatments={},
+	periods={},
+	period_label="interval [minutes]",
+	plot_behaviour="immobility",
+	save_as="",
+	):
+	
 	for key in rename_treatments:
 		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
 
