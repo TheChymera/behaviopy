@@ -2,6 +2,7 @@ __author__="Horea Christian"
 import collections
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from scipy import stats
 
 def add_significance(df, datacolumn, compare, over):
@@ -20,9 +21,12 @@ def add_significance(df, datacolumn, compare, over):
 		The column over which the plot is repeated. For each value in this column a new t-test is performed. NO correction is performed for multiple comparisons!
 	"""
 
+
 	y, h, col = df[datacolumn].max() + 0.1, 0.1, '0.4'
 	comparisons = list(collections.OrderedDict.fromkeys(df[over]))
 	compare_categories = list(set(df[compare]))
+	line_width = mpl.rcParams['lines.linewidth']
+	label_size = mpl.rcParams['axes.labelsize']
 	for ix, comparison in enumerate(comparisons):
 		compare_vals=[]
 		for compare_category in compare_categories:
@@ -32,5 +36,5 @@ def add_significance(df, datacolumn, compare, over):
 
 		x1 = ix-0.2
 		x2 = ix+0.2
-		plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=1, c=col)
-		plt.text((x1+x2)*0.5, y+h, "p = {:.2g}".format(p_value), ha='center', va='bottom', color=col)
+		plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=line_width/3, c=col)
+		plt.text((x1+x2)*0.5, y+h, "p = {:.2g}".format(p_value), ha='center', va='bottom', color=col, fontsize=label_size)
