@@ -20,9 +20,6 @@ rcParams.update({
 	'ytick.labelsize':'medium',
 	})
 
-behaviour_cols=[u'A. Rear.', u'Ambul.', u'Groom.', u'Immobile', u'Objects', u'U. Rear.', u'Risk']
-pet_cols = [u'Ctx', u'HPF', u'CPu', u'Tons', u'HT', u'SC', u'IC', u'MB', u'BS']
-
 qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
 class MidpointNormalize(colors.Normalize):
@@ -45,7 +42,7 @@ def p_from_r(r,n):
 		prob = stats.betai(0.5*df, 0.5, df / (df + t_squared))
 	return prob
 
-def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize=True, behav_normalize=False, correction=None, animals=None, save_as=None, xlabel_rotation="vertical"):
+def regression_matrix(df_x_path, x_cols, y_cols, x_dict=None, y_dict=None, df_y_path=None, output="pearson", roi_normalize=True, behav_normalize=False, correction=None, animals=None, save_as=None, xlabel_rotation="vertical"):
 
 	if xlabel_rotation != "vertical":
 		ha="left"
@@ -62,9 +59,9 @@ def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize
 		df = df.loc[animals]
 
 	if roi_normalize:
-		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
+		df[x_cols] = df[x_cols].apply(lambda x: (x / x.mean()))
 	if behav_normalize:
-		df[behaviour_cols] = df[behaviour_cols].apply(lambda x: (x / x.mean()))
+		df[y_cols] = df[y_cols].apply(lambda x: (x / x.mean()))
 
 	if output == "pearsonr":
 		dfc = df.corr()
@@ -78,8 +75,8 @@ def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize
 		dfc = dfc.applymap(lambda x: p_from_r(x,n))
 		cmap = cm.BuPu_r
 
-	dfc = dfc.loc[behaviour_cols]
-	dfc = dfc[pet_cols]
+	dfc = dfc.loc[y_cols]
+	dfc = dfc[x_cols]
 
 	if output == "p" and correction:
 		dfc_corrected = multipletests(dfc.as_matrix().flatten(), alpha=0.05, method=correction)[1].reshape(np.shape(dfc))
@@ -90,8 +87,14 @@ def regression_matrix(df_x_path, df_y_path=None, output="pearson", roi_normalize
 		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.), cmap=cmap)
 	else:
 		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.05), cmap=cmap)
-	plt.xticks(range(len(pet_cols)), pet_cols, rotation=xlabel_rotation, ha=ha)
-	plt.yticks(range(len(behaviour_cols)), behaviour_cols)
+	if x_dict:
+		plt.xticks(range(len(x_cols)), [x_dict[i] for i in x_cols], rotation=xlabel_rotation, ha=ha)
+	else:
+		plt.xticks(range(len(x_cols)), x_cols, rotation=xlabel_rotation, ha=ha)
+	if y_dict:
+		plt.yticks(range(len(y_cols)), [y_dict[i] for i in y_cols])
+	else:
+		plt.yticks(range(len(y_cols)), y_cols)
 	ax.grid(False)
 	ax.tick_params(axis="both",which="both",bottom="off",top="off",length=0)
 
@@ -114,12 +117,12 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 		df = df.loc[animals]
 
 	if roi_normalize:
-		df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
+		df[x_cols] = df[x_cols].apply(lambda x: (x / x.mean()))
 
 	fig, ax = plt.subplots()
 	ax.set_xmargin(0.1)
 	ax.set_ymargin(0.11)
-	df[pet_cols] = df[pet_cols].apply(lambda x: (x / x.mean()))
+	df[x_cols] = df[x_cols].apply(lambda x: (x / x.mean()))
 
 	fig, ax = plt.subplots()
 	ax.set_xmargin(0.1)
@@ -165,10 +168,3 @@ def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_norma
 		ax.tick_params(axis="both",which="both",bottom="off",top="off",length=0)
 		ax.plot(x_pred, y_pred, '-', color=qualitative_colorset[ix], linewidth=2, label=y_name)
 	plt.legend(loc="best")
-
-if __name__ == '__main__':
-	# regression_matrix("~/data/behaviour/DA-PET-Besh/BP.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False)
-	regression_matrix("~/data/behaviour/DA-PET-Besh/DVR.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/dvr_r.png")
-	# regression_matrix("~/data/behaviour/DA-PET-Besh/DVR.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/dvr_r++.png", xlabel_rotation=45)
-	# regression_and_scatter("~/data/behaviour/DA-PET-Besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", roi_normalize=False)
-	plt.show()
