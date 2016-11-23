@@ -42,7 +42,18 @@ def p_from_r(r,n):
 		prob = stats.betai(0.5*df, 0.5, df / (df + t_squared))
 	return prob
 
-def regression_matrix(df_x_path, x_cols, y_cols, x_dict=None, y_dict=None, df_y_path=None, output="pearson", roi_normalize=True, behav_normalize=False, correction=None, animals=None, save_as=None, xlabel_rotation="vertical"):
+def regression_matrix(df_x_path, x_cols, y_cols,
+	x_dict=None,
+	y_dict=None,
+	df_y_path=None,
+	output="pearson",
+	roi_normalize=True,
+	behav_normalize=False,
+	correction=None,
+	animals=None,
+	save_as=None,
+	xlabel_rotation="vertical",
+	):
 
 	if xlabel_rotation != "vertical":
 		ha="left"
@@ -105,7 +116,13 @@ def regression_matrix(df_x_path, x_cols, y_cols, x_dict=None, y_dict=None, df_y_
 	if save_as:
 		plt.savefig(save_as,dpi=300, transparent=True)
 
-def regression_and_scatter(df_x_path, x_name, y_names, df_y_path=None, roi_normalize=True, confidence_intervals=False, prediction_intervals=False, animals=None):
+def regression_and_scatter(df_x_path, x_name, y_names,
+	df_y_path=None,
+	roi_normalize=True,
+	confidence_intervals=False,
+	prediction_intervals=False,
+	animals=None,
+	):
 
 	df = pd.read_csv(df_x_path, index_col=0)
 
