@@ -42,7 +42,9 @@ def p_from_r(r,n):
 		prob = stats.betai(0.5*df, 0.5, df / (df + t_squared))
 	return prob
 
-def regression_matrix(df_x_path, x_cols, y_cols,
+def regression_matrix(df_x_path,
+	x_cols=None,
+	y_cols=None,
 	x_dict=None,
 	y_dict=None,
 	df_y_path=None,
@@ -62,8 +64,13 @@ def regression_matrix(df_x_path, x_cols, y_cols,
 
 	df = pd.read_csv(df_x_path, index_col=0)
 
+	if not x_cols:
+		x_cols = list(df.columns)
+
 	if df_y_path:
 		dfy = pd.read_csv(df_y_path, index_col=0)
+		if not y_cols:
+			y_cols = list(dfy.columns)
 		df = pd.concat([df, dfy], axis=1)
 
 	if animals:
@@ -99,11 +106,11 @@ def regression_matrix(df_x_path, x_cols, y_cols,
 	else:
 		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.05), cmap=cmap)
 	if x_dict:
-		plt.xticks(range(len(x_cols)), [x_dict[i] for i in x_cols], rotation=xlabel_rotation, ha=ha)
+		plt.xticks(range(len(x_cols)), failsafe_apply_dict(x_cols, x_dict), rotation=xlabel_rotation, ha=ha)
 	else:
 		plt.xticks(range(len(x_cols)), x_cols, rotation=xlabel_rotation, ha=ha)
 	if y_dict:
-		plt.yticks(range(len(y_cols)), [y_dict[i] for i in y_cols])
+		plt.yticks(range(len(y_cols)), failsafe_apply_dict(y_cols, y_dict))
 	else:
 		plt.yticks(range(len(y_cols)), y_cols)
 	ax.grid(False)
@@ -115,6 +122,14 @@ def regression_matrix(df_x_path, x_cols, y_cols,
 
 	if save_as:
 		plt.savefig(save_as,dpi=300, transparent=True)
+
+def failsafe_apply_dict(mylist, dict):
+	for ix, i in enumerate(mylist):
+		try:
+			mylist[ix] = dict[i]
+		except KeyError:
+			continue
+	return mylist
 
 def regression_and_scatter(df_x_path, x_name, y_names,
 	df_y_path=None,

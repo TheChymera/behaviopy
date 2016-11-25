@@ -44,9 +44,9 @@ if __name__ == '__main__':
 	# 	behav_normalize=False,
 	# 	save_as="/home/chymera/dvr_r.png",
 	# 	)
-	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV.csv",
-		["amygdala","cortex", "hippocampus", "striatum", "thalamus", "hypothalamus", "superior colliculus", "inferior colliculus", "midbrain", "brain stem"],
-		["assisted rearing", "ambulation", "grooming", "immobility", "object interaction", "unassisted rearing", "risk assessment"],
+	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_cor.csv",
+		y_cols=["immobility", "object interaction", "assisted rearing", "risk assessment","unassisted rearing","center walking", "wall walking","head grooming","body grooming"],
+		x_cols=["amygdala","BFS","cerebellum","central gyrus","olfactory","cortex", "hippocampus", "striatum", "thalamus", "hypothalamus", "superior colliculus", "inferior colliculus", "midbrain", "brain stem"],
 		x_dict = roi_dict,
 		y_dict = behaviour_dict,
 		df_y_path="~/data/processed/DA-PET-Besh/DONOR.csv",
