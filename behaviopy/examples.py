@@ -44,9 +44,7 @@ if __name__ == '__main__':
 	# 	behav_normalize=False,
 	# 	save_as="/home/chymera/dvr_r.png",
 	# 	)
-	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_cor.csv",
-		y_cols=["immobility", "object interaction", "assisted rearing", "risk assessment","unassisted rearing","center walking", "wall walking","head grooming","body grooming"],
-		x_cols=["amygdala","BFS","cerebellum","central gyrus","olfactory","cortex", "hippocampus", "striatum", "thalamus", "hypothalamus", "superior colliculus", "inferior colliculus", "midbrain", "brain stem"],
+	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_norCb.csv",
 		x_dict = roi_dict,
 		y_dict = behaviour_dict,
 		df_y_path="~/data/processed/DA-PET-Besh/DONOR.csv",
@@ -54,7 +52,6 @@ if __name__ == '__main__':
 		output="pearsonr",
 		roi_normalize=False,
 		behav_normalize=False,
-		save_as="/home/chymera/dvr_r.png",
 		)
 	# regression_matrix("~/data/behaviour/DA-PET-Besh/DVR.csv", df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", animals=["t1","t2","t3","t4","t5"], output="pearsonr",roi_normalize=False, behav_normalize=False,save_as="/home/chymera/dvr_r++.png", xlabel_rotation=45)
 	# regression_and_scatter("~/data/behaviour/DA-PET-Besh/DVR.csv", "Objects", ["Thalamus","Striatum","Hippocampus"], animals=["t1","t2","t3","t4","t5"], df_y_path="~/data/behaviour/DA-PET-Besh/DONOR.csv", roi_normalize=False)
