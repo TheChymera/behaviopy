@@ -51,10 +51,11 @@ def regression_matrix(df_x_path,
 	output="pearson",
 	roi_normalize=True,
 	behav_normalize=False,
-	correction=None,
+	correction="fdr_bh",
 	animals=None,
 	save_as=None,
 	xlabel_rotation="vertical",
+	fwer=0.05,
 	):
 
 	if xlabel_rotation != "vertical":
@@ -92,16 +93,19 @@ def regression_matrix(df_x_path,
 		dfc = df.corr()
 		dfc = dfc.applymap(lambda x: p_from_r(x,n))
 		cmap = cm.BuPu_r
+	elif output == "p_corrected":
+		n = len(df)
+		dfc = df.corr()
+		dfc = dfc.applymap(lambda x: p_from_r(x,n))
+		dfc_corrected = multipletests(dfc.as_matrix().flatten(), fwer, correction)[1].reshape(np.shape(dfc))
+		dfc = pd.DataFrame(dfc_corrected, dfc.index, dfc.columns)
+		cmap = cm.BuPu_r
 
 	dfc = dfc.loc[y_cols]
 	dfc = dfc[x_cols]
 
-	if output == "p" and correction:
-		dfc_corrected = multipletests(dfc.as_matrix().flatten(), alpha=0.05, method=correction)[1].reshape(np.shape(dfc))
-		dfc = pd.DataFrame(dfc_corrected, dfc.index, dfc.columns)
-
 	fig, ax = plt.subplots(figsize=(10, 10))
-	if output != "p":
+	if output not in ["p", "p_corrected"]:
 		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.), cmap=cmap)
 	else:
 		im = ax.matshow(dfc, norm=MidpointNormalize(midpoint=0.05), cmap=cmap)
