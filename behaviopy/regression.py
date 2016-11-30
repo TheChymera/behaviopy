@@ -85,14 +85,17 @@ def regression_matrix(df_x_path,
 	if output == "pearsonr":
 		dfc = df.corr()
 		cmap = cm.PiYG
+		cbar_label = "Pearson's r"
 	elif output == "slope":
 		dfc = df.corr() * (df.std().values / df.std().values[:, np.newaxis])
 		cmap = cm.PiYG
+		cbar_label = "Slope"
 	elif output == "p":
 		n = len(df)
 		dfc = df.corr()
 		dfc = dfc.applymap(lambda x: p_from_r(x,n))
 		cmap = cm.BuPu_r
+		cbar_label = "p-value"
 	elif output == "p_corrected":
 		n = len(df)
 		dfc = df.corr()
@@ -100,6 +103,7 @@ def regression_matrix(df_x_path,
 		dfc_corrected = multipletests(dfc.as_matrix().flatten(), fwer, correction)[1].reshape(np.shape(dfc))
 		dfc = pd.DataFrame(dfc_corrected, dfc.index, dfc.columns)
 		cmap = cm.BuPu_r
+		cbar_label = "p-value"
 
 	dfc = dfc.loc[y_cols]
 	dfc = dfc[x_cols]
@@ -122,7 +126,7 @@ def regression_matrix(df_x_path,
 
 	divider = make_axes_locatable(ax)
 	cax = divider.append_axes("right", size="5%", pad=0.05)
-	cbar = fig.colorbar(im, cax=cax)
+	cbar = fig.colorbar(im, cax=cax, label=cbar_label)
 
 	if save_as:
 		plt.savefig(save_as,dpi=300, transparent=True)
