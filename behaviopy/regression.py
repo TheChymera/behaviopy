@@ -84,10 +84,10 @@ def regression_matrix(df_x_path,
 	if output == "pearsonr":
 		dfc = df.corr()
 		cmap = cm.PiYG
-	if output == "slope":
+	elif output == "slope":
 		dfc = df.corr() * (df.std().values / df.std().values[:, np.newaxis])
 		cmap = cm.PiYG
-	if output == "p":
+	elif output == "p":
 		n = len(df)
 		dfc = df.corr()
 		dfc = dfc.applymap(lambda x: p_from_r(x,n))
@@ -122,6 +122,8 @@ def regression_matrix(df_x_path,
 
 	if save_as:
 		plt.savefig(save_as,dpi=300, transparent=True)
+
+	return dfc
 
 def failsafe_apply_dict(mylist, dict):
 	for ix, i in enumerate(mylist):
