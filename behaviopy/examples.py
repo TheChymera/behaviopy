@@ -34,7 +34,7 @@ behaviour_dict = {
 
 def arch_besh_da_pet():
 	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
-	x_cols=["amygdala", "bfs", "brain stem", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
+		x_cols=["amygdala", "brain stem", "bfs", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
 		y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
 		x_dict = roi_dict,
 		y_dict = behaviour_dict,
@@ -45,7 +45,7 @@ def arch_besh_da_pet():
 		behav_normalize=False,
 		)
 	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
-	x_cols=["amygdala", "bfs", "brain stem", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
+		x_cols=["amygdala", "brain stem", "bfs", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
 		y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
 		x_dict = roi_dict,
 		y_dict = behaviour_dict,
@@ -56,7 +56,7 @@ def arch_besh_da_pet():
 		behav_normalize=False,
 		)
 	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
-		x_cols=["amygdala", "bfs", "brain stem", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
+		x_cols=["amygdala", "brain stem", "bfs", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
 		y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
 		x_dict = roi_dict,
 		y_dict = behaviour_dict,
