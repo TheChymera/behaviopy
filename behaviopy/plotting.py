@@ -15,11 +15,24 @@ sns.set_style("white", {'legend.frameon': True})
 
 qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
-def sucrose_preference(df, columns=[], legend_loc="best", rename_treatments={}, datacolumn_name="Sucrose Preference Ratio", period_label="Period [days]", save_as=""):
+def sucrose_preference(df,
+	columns=[],
+	legend_loc="best",
+	rename_treatments={},
+	datacolumn_name="Sucrose Preference Ratio",
+	period_label="Period [days]",
+	save_as="",
+	matplotlibrc=False,
+	):
+
 	for key in rename_treatments:
 		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
 
 	plt.style.use('ggplot')
+
+	if matplotlibrc:
+		matplotlibrc.main()
+
 	sns.swarmplot(x=period_label,y=datacolumn_name, hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	plt.legend(loc=legend_loc)
 
