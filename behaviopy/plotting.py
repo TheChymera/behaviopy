@@ -22,16 +22,12 @@ def sucrose_preference(df,
 	datacolumn_name="Sucrose Preference Ratio",
 	period_label="Period [days]",
 	save_as="",
-	matplotlibrc=False,
 	):
 
 	for key in rename_treatments:
 		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
 
 	plt.style.use('ggplot')
-
-	if matplotlibrc:
-		matplotlibrc.main()
 
 	sns.swarmplot(x=period_label,y=datacolumn_name, hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	plt.legend(loc=legend_loc)
@@ -45,16 +41,12 @@ def forced_swim_ttest(df,
 	period_label="interval [minutes]",
 	plot_behaviour="immobility",
 	save_as="",
-	matplotlibrc=False,
 	):
 
 	for key in rename_treatments:
 		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
 
 	plt.style.use('ggplot')
-
-	if matplotlibrc:
-		matplotlibrc.main()
 
 	sns.swarmplot(x=period_label, y=plot_behaviour+" ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	plt.legend(loc=legend_loc)
