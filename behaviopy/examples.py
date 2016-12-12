@@ -4,12 +4,16 @@ import regression
 
 roi_dict = {
 	"amygdala":"Amy",
+	"bfs":"BFS",
 	"brain stem":"BS",
+	"central gyrus":"Cg",
+	"cerebellum":"Cb",
 	"cortex":"Ctx",
 	"hippocampus":"HPF",
 	"hypothalamus":"HT",
 	"inferior colliculus":"IC",
 	"midbrain":"MB",
+	"olfactory":"Ob",
 	"striatum":"CPu",
 	"superior colliculus":"SC",
 	"thalamus":"Tons",
@@ -32,10 +36,13 @@ behaviour_dict = {
 	"wall walking":"Wall Walk.",
 	}
 
-def arch_besh_da_pet():
+def arch_besh_da_pet(
+	x_cols=["amygdala", "bfs", "brain stem", "striatum", "cerebellum", "central gyrus", "inferior colliculus", "superior colliculus", "cortex", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
+	y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
+	):
 	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
-		x_cols=["amygdala", "brain stem", "bfs", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
-		y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
+		x_cols=x_cols,
+		y_cols=y_cols,
 		x_dict = roi_dict,
 		y_dict = behaviour_dict,
 		df_y_path="~/data/processed/DA-PET-Besh/DONOR.csv",
@@ -45,8 +52,8 @@ def arch_besh_da_pet():
 		behav_normalize=False,
 		)
 	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
-		x_cols=["amygdala", "brain stem", "bfs", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
-		y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
+		x_cols=x_cols,
+		y_cols=y_cols,
 		x_dict = roi_dict,
 		y_dict = behaviour_dict,
 		df_y_path="~/data/processed/DA-PET-Besh/DONOR.csv",
@@ -56,8 +63,8 @@ def arch_besh_da_pet():
 		behav_normalize=False,
 		)
 	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
-		x_cols=["amygdala", "brain stem", "bfs", "inferior colliculus", "superior colliculus", "central gyrus", "striatum", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
-		y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
+		x_cols=x_cols,
+		y_cols=y_cols,
 		x_dict = roi_dict,
 		y_dict = behaviour_dict,
 		df_y_path="~/data/processed/DA-PET-Besh/DONOR.csv",
