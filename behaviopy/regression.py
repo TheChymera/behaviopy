@@ -134,12 +134,16 @@ def regression_matrix(df_x_path,
 	return dfc
 
 def failsafe_apply_dict(mylist, dict):
+	#we create a new list, to not modify the old one in-place
+	converted_list = []
 	for ix, i in enumerate(mylist):
 		try:
-			mylist[ix] = dict[i]
+			converted_value = dict[i]
 		except KeyError:
 			continue
-	return mylist
+		else:
+			converted_list.append(converted_value)
+	return converted_list
 
 def regression_and_scatter(df_x_path, x_name, y_names,
 	df_y_path=None,
