@@ -15,6 +15,32 @@ sns.set_style("white", {'legend.frameon': True})
 
 qualitative_colorset = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
+def control_first_reordering(df, hue_column):
+	"""Reorder the dataframe so that rows with control data show up first (this makes Seaborn assign them the first colors in the colorset).
+
+	Parameters
+	----------
+
+	df : pandas DataFrame
+	Dataframe to reorder
+
+	hue_column : string
+	The name of the column based on which the hue will be applied. This is the column which must indicate which rows correspond to controls
+	"""
+
+	hue_ordering = []
+	noncontrols = []
+	for hue in list(set(df[hue_column])):
+		if "Control" in hue or "control" in hue:
+			hue_ordering.append(hue)
+		else:
+			noncontrols.append(hue)
+	hue_ordering.extend(noncontrols)
+	df[hue_column] = pd.Categorical(df[hue_column], hue_ordering)
+	df.sort(hue_column)
+
+	return df
+
 def sucrose_preference(df,
 	columns=[],
 	legend_loc="best",
@@ -26,9 +52,9 @@ def sucrose_preference(df,
 
 	for key in rename_treatments:
 		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
+	df = control_first_reordering(df, "treatment")
 
 	plt.style.use('ggplot')
-
 	sns.swarmplot(x=period_label,y=datacolumn_name, hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	plt.legend(loc=legend_loc)
 
@@ -45,6 +71,7 @@ def forced_swim_ttest(df,
 
 	for key in rename_treatments:
 		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
+	df = control_first_reordering(df, "treatment")
 
 	plt.style.use('ggplot')
 
@@ -56,6 +83,7 @@ def forced_swim_ttest(df,
 def forced_swim_timecourse(df, is_preformatted=False, legend_loc="best", rename_treatments={}, period_label="interval [1 min]", plotstyle="tsplot", plot_behaviour="immobility", save_as=""):
 	for key in rename_treatments:
 		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
+	df = control_first_reordering(df, "treatment")
 
 	plt.style.use('ggplot')
 	if plotstyle == "tsplot":
