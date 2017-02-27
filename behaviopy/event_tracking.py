@@ -9,9 +9,10 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 	"""Wrapper for evaluate() passing data from a LabbookDB model database.
 
 	"""
-	import sys
-	sys.path.append(os.path.expanduser('~/src/LabbookDB/db/'))
-	from query import get_df
+	from labbookdb.db.query import get_df
+	# import sys
+	# sys.path.append(os.path.expanduser('~/src/LabbookDB/db/'))
+	# from query import get_df
 
 	if not author:
 		print("It is advisable to add your name's three-letter abbreviation via the \"author\" argument. This helps identify your work and protects it from being overwritten.")
@@ -68,6 +69,8 @@ def evaluate_db(db_path, test_type, animal_ids=[], animals_id_column="id_eth", d
 
 def evaluate(recording_path, trial_duration, skiptime=0, events={}, bracket="", volume=1.,output_path="~/evaluation", non_redundant=True):
 	"""Evaluate a behavioural recording.
+	E.g. for forced swim test, press enter when the experiment starts and s/i to annotate the onset of the respective behaviours.
+	!!! Add optional instructons screen !!!
 
 	Parameters
 	----------
@@ -209,10 +212,9 @@ def evaluate(recording_path, trial_duration, skiptime=0, events={}, bracket="", 
 	return
 
 if __name__ == '__main__':
-	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0037.mkv"
-	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0038.mkv"
-	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0041.mkv"
-	# bracket = "40-58,"
+	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0078.mkv"
+	# bracket = "34-66,"
 	# bracket = ""
-	# evaluate(recording_path,5,events={"s":"swimming","f":"floating"}, bracket=bracket, volume=0.01)
+	# evaluate(recording_path,5,events={"s":"swimming","i":"immobility"}, bracket=bracket, volume=0.01)
+
 	evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[],author="chr",volume=0.1)
