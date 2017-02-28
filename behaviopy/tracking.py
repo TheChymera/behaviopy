@@ -153,6 +153,4 @@ if __name__ == '__main__':
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0078.mkv"
 	# bracket = "34-66,"
 	# bracket = ""
-	# evaluate(recording_path,5,events={"s":"swimming","i":"immobility"}, bracket=bracket, volume=0.01)
-
-	evaluate_db("~/syncdata/meta.db","forced_swim_test",animal_ids=[],author="chr",volume=0.1)
+	# manual_events(recording_path,5,events={"s":"swimming","i":"immobility"}, bracket=bracket, volume=0.01)
