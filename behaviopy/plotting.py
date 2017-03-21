@@ -42,23 +42,27 @@ def control_first_reordering(df, hue_column):
 	return df
 
 def sucrose_preference(df,
-	columns=[],
+	comparison="Treatment",
+	comparison_instances=[],
+	comparison_instances_label="Period [days]",
+	datacolumn_name="Sucrose Preference Ratio",
 	legend_loc="best",
 	rename_treatments={},
-	datacolumn_name="Sucrose Preference Ratio",
-	period_label="Period [days]",
 	save_as="",
 	):
 
+	if comparison_instances:
+		df[df[comparison_instances_label].isin([comparison_instances])]
+
 	for key in rename_treatments:
-		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
-	df = control_first_reordering(df, "treatment")
+		df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]
+	df = control_first_reordering(df, "Treatment")
 
 	plt.style.use('ggplot')
-	sns.swarmplot(x=period_label,y=datacolumn_name, hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
+	sns.swarmplot(x=comparison_instances_label,y=datacolumn_name, hue=comparison, data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	plt.legend(loc=legend_loc)
 
-	add_significance(df, datacolumn_name, compare="treatment", over=period_label)
+	add_significance(df, datacolumn_name, compare=comparison, over=comparison_instances_label)
 
 def forced_swim_ttest(df,
 	legend_loc="best",
