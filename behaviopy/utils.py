@@ -32,7 +32,13 @@ def add_significance(df, datacolumn, compare, over):
 		for compare_category in compare_categories:
 			compare_category_vals = df.loc[(df[compare] == compare_category) & (df[over] == comparison)][datacolumn]
 			compare_vals.append(compare_category_vals)
-		_, p_value = stats.ttest_ind(*compare_vals)
+		compare_vals_lengths = [len(i) for i in compare_vals]
+		if 1 in compare_vals_lengths:
+			compare_vals = [i for (j,i) in sorted(zip(compare_vals_lengths,compare_vals), reverse=True)]
+			_, p_values = stats.ttest_1samp(*compare_vals)
+			p_value = p_values[0]
+		else:
+			_, p_value = stats.ttest_ind(*compare_vals)
 
 		x1 = ix-0.2
 		x2 = ix+0.2
