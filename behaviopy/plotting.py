@@ -42,15 +42,40 @@ def control_first_reordering(df, hue_column):
 	return df
 
 def sucrose_preference(df,
-	comparison="Treatment",
-	comparison_instances=[],
-	comparison_instances_label="Period [days]",
+	compare="Treatment",
+	comparisons={"Period [days]":[]},
 	datacolumn_name="Sucrose Preference Ratio",
 	legend_loc="best",
 	rename_treatments={},
 	save_as="",
 	):
+	"""High-level interface for common applications of the sucrose preference test
 
+	Parameters
+	----------
+
+	df : Pandas Dataframe
+	Pandas Dataframe containing the experimental data.
+
+	compare : string, optional
+	Which parameter to categorize the comparison by. Must be a column name from df.
+
+	comparisons : dict, optional
+	A dictionary, the key of which indicates which df column to generate comparison insances from. If only a subset of the available rows are to be included in the comparison, the dictionary needs to specify a value, consisting of a list of acceptable values on the column given by the key.
+
+	datacolumn_name : string, optional
+	What data to compare. Must be a olumn name from df.
+
+	legend_loc : string, optional
+	Where to place the legend on the figure.
+
+	rename_treatments : dict, optional
+	Dictionary with strings as keys and values used to map treatment names onto new stings.
+	"""
+
+
+	comparison_instances_label = comparisons.keys()[0]
+	comparison_instances = comparisons.values()[0]
 	if comparison_instances:
 		df[df[comparison_instances_label].isin([comparison_instances])]
 
@@ -59,10 +84,10 @@ def sucrose_preference(df,
 	df = control_first_reordering(df, "Treatment")
 
 	plt.style.use('ggplot')
-	sns.swarmplot(x=comparison_instances_label,y=datacolumn_name, hue=comparison, data=df, palette=sns.color_palette(qualitative_colorset), split=True)
+	sns.swarmplot(x=comparison_instances_label,y=datacolumn_name, hue=compare, data=df, palette=sns.color_palette(qualitative_colorset), split=True)
 	plt.legend(loc=legend_loc)
 
-	add_significance(df, datacolumn_name, compare=comparison, over=comparison_instances_label)
+	add_significance(df, datacolumn_name, compare=compare, over=comparison_instances_label)
 
 def forced_swim_ttest(df,
 	legend_loc="best",
