@@ -3,7 +3,32 @@ import collections
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from os import path
 from scipy import stats
+
+def get_data_dir(subdirectory, data_root_variants):
+	"""Get absolute data directory contingent on what variants are available on the system.
+
+	Parameters
+	----------
+
+	subdirectory: str
+	Which subdirectory (or subsubdirectory, etc.) of the data root is needed
+
+	data_root_variants: list of str
+	What data root directories to query (in the given order).
+	"""
+
+	my_data_dir = None
+	for i in data_root_variants:
+		candidate_path = path.abspath(path.expanduser(path.join(i,subdirectory)))
+		if path.isdir(candidate_path):
+			my_data_dir = candidate_path
+			break
+	if not my_data_dir:
+		raise ValueError("No suitable data directory was found on disk.")
+
+	return my_data_dir
 
 def add_significance(df, datacolumn, compare, over):
 	"""Print significance level on 2-item comparison plots (also works with multiple 2-item comparisons)
