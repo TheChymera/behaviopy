@@ -95,7 +95,7 @@ def regression_matrix(df_x_path,
 		dfc = df.corr()
 		dfc = dfc.applymap(lambda x: p_from_r(x,n))
 		cmap = cm.BuPu_r
-		cbar_label = "p-value"
+		cbar_label = "p-value (uncorrected)"
 	elif output == "p_corrected":
 		n = len(df)
 		dfc = df.corr()
@@ -103,7 +103,7 @@ def regression_matrix(df_x_path,
 		dfc_corrected = multipletests(dfc.as_matrix().flatten(), fwer, correction)[1].reshape(np.shape(dfc))
 		dfc = pd.DataFrame(dfc_corrected, dfc.index, dfc.columns)
 		cmap = cm.BuPu_r
-		cbar_label = "p-value"
+		cbar_label = "p-value (FWER={} corrected)".format(str(fwer))
 
 	dfc = dfc.loc[y_cols]
 	dfc = dfc[x_cols]
