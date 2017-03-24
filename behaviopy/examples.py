@@ -1,73 +1,52 @@
 import matplotlib.pyplot as plt
+from os import path
 
 import regression
+from abbreviations import *
+from utils import get_data_dir
 
-roi_dict = {
-	"amygdala":"Amy",
-	"bfs":"BFS",
-	"brain stem":"BS",
-	"central gyrus":"Cg",
-	"cerebellum":"Cb",
-	"cortex":"Ctx",
-	"hippocampus":"HPF",
-	"hypothalamus":"HT",
-	"inferior colliculus":"IC",
-	"midbrain":"MB",
-	"olfactory":"Ob",
-	"striatum":"CPu",
-	"superior colliculus":"SC",
-	"thalamus":"Tons",
-	}
+#relative paths
+THISSCRIPTSPATH = path.dirname(path.realpath(__file__))
+DATA_ROOT_VARIANTS = [
+	"~/data/processed/",
+	path.join(THISSCRIPTSPATH,"..","example_data","processed"),
+	]
 
-behaviour_dict = {
-	"ambulation":"Ambul",
-	"assisted rearing":"A. Rear.",
-	"body grooming":"Body Grooming",
-	"center walking":"Center Walking",
-	"exploration":"Exploration",
-	"exploration - no wall":"Exp. - no wall",
-	"grooming":"Groom.",
-	"head grooming":"Head Groom.",
-	"immobility":"Immobile",
-	"object interaction":"Object",
-	"rearing":"Rear.",
-	"risk assessment":"Risk",
-	"unassisted rearing":"U. Rear.",
-	"wall walking":"Wall Walk.",
-	}
-
-def arch_besh_da_pet(
+def pet_behaviour(
 	x_cols=["amygdala", "bfs", "brain stem", "striatum", "cerebellum", "central gyrus", "inferior colliculus", "superior colliculus", "cortex", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
 	y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
 	):
-	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
+
+	data_dir = get_data_dir("herde2017", DATA_ROOT_VARIANTS)
+
+	regression.regression_matrix(path.join(data_dir,"SUV_con40-60.csv"),
 		x_cols=x_cols,
 		y_cols=y_cols,
-		x_dict = roi_dict,
-		y_dict = behaviour_dict,
-		df_y_path="~/data/processed/DA-PET-Besh/DONOR.csv",
+		x_dict = ROI_ABBREV,
+		y_dict = BEHAVIOUR_ABBREV,
+		df_y_path=path.join(data_dir,"DONOR.csv"),
 		animals=["t1","t2","t3","t4","t5"],
 		output="p_corrected",
 		roi_normalize=False,
 		behav_normalize=False,
 		)
-	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
+	regression.regression_matrix(path.join(data_dir,"SUV_con40-60.csv"),
 		x_cols=x_cols,
 		y_cols=y_cols,
-		x_dict = roi_dict,
-		y_dict = behaviour_dict,
-		df_y_path="~/data/processed/DA-PET-Besh/DONOR.csv",
+		x_dict = ROI_ABBREV,
+		y_dict = BEHAVIOUR_ABBREV,
+		df_y_path=path.join(data_dir,"DONOR.csv"),
 		animals=["t1","t2","t3","t4","t5"],
 		output="p",
 		roi_normalize=False,
 		behav_normalize=False,
 		)
-	regression.regression_matrix("~/data/processed/DA-PET-Besh/SUV_con40-60.csv",
+	regression.regression_matrix(path.join(data_dir,"SUV_con40-60.csv"),
 		x_cols=x_cols,
 		y_cols=y_cols,
-		x_dict = roi_dict,
-		y_dict = behaviour_dict,
-		df_y_path="~/data/processed/DA-PET-Besh/DONOR.csv",
+		x_dict = ROI_ABBREV,
+		y_dict = BEHAVIOUR_ABBREV,
+		df_y_path=path.join(data_dir,"DONOR.csv"),
 		animals=["t1","t2","t3","t4","t5"],
 		output="pearsonr",
 		roi_normalize=False,
@@ -75,6 +54,6 @@ def arch_besh_da_pet(
 		)
 
 if __name__ == '__main__':
-	arch_besh_da_pet()
+	pet_behaviour()
 
 	plt.show()
