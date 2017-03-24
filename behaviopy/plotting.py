@@ -73,7 +73,6 @@ def sucrose_preference(df,
 	Dictionary with strings as keys and values used to map treatment names onto new stings.
 	"""
 
-
 	comparison_instances_label = list(comparisons.keys())[0]
 	comparison_instances = list(comparisons.values())[0]
 	if comparison_instances:
