@@ -74,8 +74,8 @@ def sucrose_preference(df,
 	"""
 
 
-	comparison_instances_label = comparisons.keys()[0]
-	comparison_instances = comparisons.values()[0]
+	comparison_instances_label = list(comparisons.keys())[0]
+	comparison_instances = list(comparisons.values())[0]
 	if comparison_instances:
 		df[df[comparison_instances_label].isin([comparison_instances])]
 
