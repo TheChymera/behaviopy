@@ -1,0 +1,33 @@
+ROI_ABBREV = {
+	"amygdala":"Amy",
+	"bfs":"BFS",
+	"brain stem":"BS",
+	"central gyrus":"Cg",
+	"cerebellum":"Cb",
+	"cortex":"Ctx",
+	"hippocampus":"HPF",
+	"hypothalamus":"HT",
+	"inferior colliculus":"IC",
+	"midbrain":"MB",
+	"olfactory":"Ob",
+	"striatum":"CPu",
+	"superior colliculus":"SC",
+	"thalamus":"Tons",
+	}
+
+BEHAVIOUR_ABBREV = {
+	"ambulation":"Ambul",
+	"assisted rearing":"A. Rear.",
+	"body grooming":"Body Grooming",
+	"center walking":"Center Walking",
+	"exploration":"Exploration",
+	"exploration - no wall":"Exp. - no wall",
+	"grooming":"Groom.",
+	"head grooming":"Head Groom.",
+	"immobility":"Immobile",
+	"object interaction":"Object",
+	"rearing":"Rear.",
+	"risk assessment":"Risk",
+	"unassisted rearing":"U. Rear.",
+	"wall walking":"Wall Walk.",
+	}
