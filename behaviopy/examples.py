@@ -9,7 +9,7 @@ from utils import get_data_dir
 THISSCRIPTSPATH = path.dirname(path.realpath(__file__))
 DATA_ROOT_VARIANTS = [
 	"~/data/processed/",
-	path.join(THISSCRIPTSPATH,"..","example_data","processed"),
+	path.join(THISSCRIPTSPATH,"..","example_data"),
 	]
 
 def pet_behaviour(
