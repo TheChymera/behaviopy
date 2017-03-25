@@ -8,7 +8,10 @@ from os import path
 from sqlalchemy import create_engine, or_, inspection
 from sqlalchemy.orm import sessionmaker, aliased, with_polymorphic, joinedload_all
 
-from .utils import *
+try:
+	from .utils import *
+except ValueError:
+	from utils import *
 
 import seaborn as sns
 sns.set_style("white", {'legend.frameon': True})
@@ -41,15 +44,14 @@ def control_first_reordering(df, hue_column):
 
 	return df
 
-def sucrose_preference(df,
+def expandable_ttest(df,
 	compare="Treatment",
 	comparisons={"Period [days]":[]},
-	datacolumn_name="Sucrose Preference Ratio",
+	datacolumn_label="Sucrose Preference Ratio",
 	legend_loc="best",
 	rename_treatments={},
-	save_as="",
 	):
-	"""High-level interface for common applications of the sucrose preference test
+	"""High-level interface for plotting of one or multiple related t-tests.
 
 	Parameters
 	----------
@@ -63,8 +65,8 @@ def sucrose_preference(df,
 	comparisons : dict, optional
 	A dictionary, the key of which indicates which df column to generate comparison insances from. If only a subset of the available rows are to be included in the comparison, the dictionary needs to specify a value, consisting of a list of acceptable values on the column given by the key.
 
-	datacolumn_name : string, optional
-	What data to compare. Must be a olumn name from df.
+	datacolumn_label : string, optional
+	A column name from df, the values in which column give the data to plot.
 
 	legend_loc : string, optional
 	Where to place the legend on the figure.
@@ -78,45 +80,56 @@ def sucrose_preference(df,
 	if comparison_instances:
 		df[df[comparison_instances_label].isin([comparison_instances])]
 
+	if rename_treatments:
+		for key in rename_treatments:
+			df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]
+		df = control_first_reordering(df, "Treatment")
+
+	plt.style.use('ggplot')
+	sns.swarmplot(x=comparison_instances_label,y=datacolumn_label, hue=compare, data=df, palette=sns.color_palette(qualitative_colorset), split=True)
+	plt.legend(loc=legend_loc)
+
+	add_significance(df, datacolumn_label, compare=compare, over=comparison_instances_label)
+
+def forced_swim_timecourse(df,
+	datacolumn_label="Immobility Ratio",
+	legend_loc="best",
+	plotstyle="tsplot",
+	rename_treatments={},
+	time_label="interval [1 min]",
+	):
+	"""Plot timecourse of forced swim measurements.
+
+	Parameters
+	----------
+
+	df : Pandas Dataframe
+	Pandas Dataframe containing the experimental data.
+
+	datacolumn_label : string, optional
+	A column name from df, the values in which column give the data to plot.
+
+	legend_loc : string, optional
+	Where to place the legend on the figure.
+
+	plotstyle : {"pointplot", "tsplot"}
+	Dictionary with strings as keys and values used to map treatment names onto new stings.
+
+	rename_treatments : dict, optional
+	Dictionary with strings as keys and values used to map treatment names onto new stings.
+
+	time_label : dict, optional
+	A column name from df, the values in which column give the time pointd of the data.
+	"""
+
 	for key in rename_treatments:
 		df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]
 	df = control_first_reordering(df, "Treatment")
 
 	plt.style.use('ggplot')
-	sns.swarmplot(x=comparison_instances_label,y=datacolumn_name, hue=compare, data=df, palette=sns.color_palette(qualitative_colorset), split=True)
-	plt.legend(loc=legend_loc)
-
-	add_significance(df, datacolumn_name, compare=compare, over=comparison_instances_label)
-
-def forced_swim_ttest(df,
-	legend_loc="best",
-	rename_treatments={},
-	periods={},
-	period_label="interval [minutes]",
-	plot_behaviour="immobility",
-	save_as="",
-	):
-
-	for key in rename_treatments:
-		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
-	df = control_first_reordering(df, "treatment")
-
-	plt.style.use('ggplot')
-
-	sns.swarmplot(x=period_label, y=plot_behaviour+" ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), split=True)
-	plt.legend(loc=legend_loc)
-
-	add_significance(df, plot_behaviour+" ratio", compare="treatment", over=period_label)
-
-def forced_swim_timecourse(df, is_preformatted=False, legend_loc="best", rename_treatments={}, period_label="interval [1 min]", plotstyle="tsplot", plot_behaviour="immobility", save_as=""):
-	for key in rename_treatments:
-		df.loc[df["treatment"] == key, "treatment"] = rename_treatments[key]
-	df = control_first_reordering(df, "treatment")
-
-	plt.style.use('ggplot')
 	if plotstyle == "tsplot":
-		myplot = sns.tsplot(time=period_label, value=plot_behaviour+" ratio", condition="treatment", unit="identifier", data=df, err_style="unit_traces", color=sns.color_palette(qualitative_colorset))
-		myplot.set_xticks(list(set(df[period_label])))
+		myplot = sns.tsplot(time=time_label, value=datacolumn_label, condition="Treatment", unit="Identifier", data=df, err_style="unit_traces", color=sns.color_palette(qualitative_colorset))
+		myplot.set_xticks(list(set(df[time_label])))
 	elif plotstyle == "pointplot":
-		sns.pointplot(x=period_label, y=plot_behaviour+" ratio", hue="treatment", data=df, palette=sns.color_palette(qualitative_colorset), legend_out=False, dodge=0.1)
+		sns.pointplot(x=time_label, y=datacolumn_label, hue="Treatment", data=df, palette=sns.color_palette(qualitative_colorset), legend_out=False, dodge=0.1)
 	plt.legend(loc=legend_loc)
