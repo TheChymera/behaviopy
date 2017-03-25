@@ -1,0 +1,16 @@
+,Cage ID,Period [days],Sucrose Bottle Position,Sucrose Concentration,Sucrose Preference Ratio,Treatment
+32,32,0 to 2,left,1.0,0.7,Fluoxetine
+32,32,2 to 4,right,1.0,0.729032258065,Fluoxetine
+32,32,4 to 6,left,1.0,0.788819875776,Fluoxetine
+33,33,0 to 2,left,1.0,0.756097560976,Fluoxetine
+33,33,2 to 4,right,1.0,0.595041322314,Fluoxetine
+33,33,4 to 6,left,1.0,0.669491525424,Fluoxetine
+34,34,0 to 2,left,1.0,0.656934306569,Control
+34,34,2 to 4,right,1.0,0.645454545455,Control
+34,34,4 to 6,left,1.0,0.574074074074,Control
+35,35,0 to 2,left,1.0,0.6875,Control
+35,35,2 to 4,right,1.0,0.672566371681,Control
+35,35,4 to 6,left,1.0,0.742424242424,Control
+36,36,0 to 2,left,1.0,0.701570680628,Control
+36,36,2 to 4,right,1.0,0.647540983607,Control
+36,36,4 to 6,left,1.0,0.725190839695,Control
