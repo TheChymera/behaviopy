@@ -11,6 +11,7 @@ from sqlalchemy import create_engine, or_, inspection
 from matplotlib.colors import ListedColormap
 from sqlalchemy.orm import sessionmaker, aliased, with_polymorphic, joinedload_all
 
+#python 2/3 compatible relative imports
 try:
 	from .utils import *
 	from .plot_utils import *
