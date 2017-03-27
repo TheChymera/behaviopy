@@ -10,5 +10,6 @@ Plotting functions are designed to work with preformatted data in CSV format (e.
 * [NumPy](http://www.numpy.org/)
 * [pandas](http://pandas.pydata.org/)
 * [PsychoPy](http://www.psychopy.org/) (optional - only needed for manual event tracking)
-* [Seaborn](https://seaborn.pydata.org/)
 * [SciPy](https://www.scipy.org/scipylib/index.html)
+* [Seaborn](https://seaborn.pydata.org/)
+* [Statsmodels](https://github.com/statsmodels/statsmodels)
