@@ -84,7 +84,7 @@ def timetable(reference_df, x_key, shade, saturate,
 	if not window_end:
 		window_end = max(dates) + dt.timedelta(days=padding)
 	else:
-		window_end = dt.strptime(window_end, "%Y,%m,%d").date()
+		window_end = dt.datetime.strptime(window_end, "%Y,%m,%d").date()
 
 	#create generic plotting dataframe
 	x_vals = list(set(reference_df[x_key]))
