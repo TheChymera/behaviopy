@@ -15,7 +15,7 @@ from sqlalchemy.orm import sessionmaker, aliased, with_polymorphic, joinedload_a
 try:
 	from .utils import *
 	from .plot_utils import *
-except ValueError:
+except (ValueError, SystemError):
 	from utils import *
 	from plot_utils import *
 
@@ -77,10 +77,14 @@ def timetable(reference_df, x_key, shade, saturate,
 
 	#GET FIRST AND LAST DATE
 	dates = get_dates(reference_df, [shade, saturate])
+	try:
+		dates = [dt.datetime.strptime(i.split(" ")[0], "%Y-%m-%d").date() for i in dates]
+	except AttributeError:
+		pass
 	if not window_start:
 		window_start = min(dates) - dt.timedelta(days=padding)
 	else:
-		window_start = dt.strptime(window_start, "%Y,%m,%d").date()
+		window_start = dt.datetime.strptime(window_start, "%Y,%m,%d").date()
 	if not window_end:
 		window_end = max(dates) + dt.timedelta(days=padding)
 	else:
@@ -109,10 +113,18 @@ def timetable(reference_df, x_key, shade, saturate,
 					filtered_df = reference_df[(reference_df[key] == entry[key][0])&(reference_df[x_key] == x_val)]
 					try:
 						start = list(set(filtered_df[entry[key][1]]))[0]
+						try:
+							start = dt.datetime.strptime(start.split(" ")[0], "%Y-%m-%d").date()
+						except AttributeError:
+							pass
 					except IndexError:
 						pass
 					if len(entry[key]) == 3:
 						end = list(set(filtered_df[entry[key][2]]))[0]
+						try:
+							end = dt.datetime.strptime(end.split(" ")[0], "%Y-%m-%d").date()
+						except AttributeError:
+							pass
 						active_dates = [i for i in perdelta(start,end+dt.timedelta(days=1),dt.timedelta(days=1))]
 						for active_date in active_dates:
 							df_.set_value(active_date, x_val, df_.get_value(active_date, x_val)+c_step)
@@ -121,6 +133,10 @@ def timetable(reference_df, x_key, shade, saturate,
 			elif isinstance(entry, str):
 				filtered_df = reference_df[reference_df[x_key] == x_val]
 				active_dates = list(set(filtered_df[entry]))
+				try:
+					active_dates = [dt.datetime.strptime(i.split(" ")[0], "%Y-%m-%d").date() for i in active_dates]
+				except AttributeError:
+					pass
 				for active_date in active_dates:
 					#escaping dates which are outside the date range (e.g. when specifying tighter window_end and window_start contraints)
 					try:
@@ -143,7 +159,7 @@ def timetable(reference_df, x_key, shade, saturate,
 					try:
 						start = list(set(filtered_df[entry[key][1]]))[0]
 						try:
-							start = start.date()
+							start = dt.datetime.strptime(start.split(" ")[0], "%Y-%m-%d").date()
 						except AttributeError:
 							pass
 					except IndexError:
@@ -151,6 +167,10 @@ def timetable(reference_df, x_key, shade, saturate,
 					if len(entry[key]) == 3:
 						try:
 							end = list(set(filtered_df[entry[key][2]]))[0]
+							try:
+								end = dt.datetime.strptime(end.split(" ")[0], "%Y-%m-%d").date()
+							except AttributeError:
+								pass
 							active_dates = [i for i in perdelta(start,end+dt.timedelta(days=1),dt.timedelta(days=1))]
 							for active_date in active_dates:
 								df_.set_value(active_date, x_val, df_.get_value(active_date, x_val)+c_step)
