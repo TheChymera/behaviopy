@@ -3,7 +3,6 @@ import pandas as pd
 from os import path
 
 import plotting
-import regression
 from abbreviations import *
 from utils import get_data_dir
 
@@ -18,6 +17,9 @@ def pet_behaviour(
 	x_cols=["amygdala", "bfs", "brain stem", "striatum", "cerebellum", "central gyrus", "inferior colliculus", "superior colliculus", "cortex", "hippocampus", "hypothalamus", "midbrain", "olfactory", "thalamus",],
 	y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
 	):
+
+	#imprting in function, as this otherwise overwrites the more widely used styles from the plotting module (`.plotting`)
+	import regression
 
 	data_dir = get_data_dir("herde2017", DATA_ROOT_VARIANTS)
 
@@ -120,11 +122,11 @@ def timetable():
 		)
 
 if __name__ == '__main__':
-	timetable()
+	# timetable()
 	# pet_behaviour()
 	# forced_swim_ttest()
 	# forced_swim_ts("tsplot")
-	# forced_swim_ts("pointplot")
+	forced_swim_ts("pointplot")
 	# sucrose_preference_side()
 	# sucrose_preference_treatment()
 
