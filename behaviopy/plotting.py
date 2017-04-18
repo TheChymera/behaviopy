@@ -183,7 +183,10 @@ def timetable(reference_df, x_key, shade, saturate,
 			elif isinstance(entry, str):
 				filtered_df = reference_df[reference_df[x_key] == x_val]
 				active_dates = list(set(filtered_df[entry]))
-				df_.set_value(active_dates, x_val, 1)
+				try:
+					df_.set_value(active_dates, x_val, 1)
+				except KeyError:
+					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_dates))
 	if not real_dates:
 		df_ = df_.set_index(np.arange(len(df_))-padding)
 	im = ax.pcolorfast(df_.T, cmap=ListedColormap(colorlist), vmin=0, vmax=len(colorlist)-1, alpha=.5)
