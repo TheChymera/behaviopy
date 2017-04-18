@@ -109,24 +109,32 @@ def timetable():
 	df_path = path.join(data_dir,"timetable.csv")
 	df = pd.read_csv(df_path)
 
+	shade = ["FMRIMeasurement_date"]
+	draw = [
+		{"TreatmentProtocol_code":["aFluIV","Treatment_start_date"]},
+		{"TreatmentProtocol_code":["aFluIV_","Treatment_start_date"]},
+		"OpenFieldTestMeasurement_date",
+		"ForcedSwimTestMeasurement_date",
+		]
 	saturate = [
 		{"Cage_TreatmentProtocol_code":["cFluDW","Cage_Treatment_start_date","Cage_Treatment_end_date"]},
 		{"Cage_TreatmentProtocol_code":["cFluDW_","Cage_Treatment_start_date","Cage_Treatment_end_date"]},
-		{"TreatmentProtocol_code":["aFluIV","Treatment_start_date"]},
-		{"TreatmentProtocol_code":["aFluSC","Treatment_start_date"]}
+		{"TreatmentProtocol_code":["aFluSC","Treatment_start_date"]},
 		]
 
 	plotting.timetable(df, "Animal_id",
-		shade=["FMRIMeasurement_date"],
+		draw=draw,
 		saturate=saturate,
+		shade=shade,
+		window_end="2017,3,21",
 		)
 
 if __name__ == '__main__':
-	# timetable()
+	timetable()
 	# pet_behaviour()
 	# forced_swim_ttest()
 	# forced_swim_ts("tsplot")
-	forced_swim_ts("pointplot")
+	# forced_swim_ts("pointplot")
 	# sucrose_preference_side()
 	# sucrose_preference_treatment()
 
