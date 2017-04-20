@@ -91,7 +91,10 @@ def add_color(cMap, blank_color):
 
 	return LinearSegmentedColormap("name", cdict)
 
-def ttp_style(ax, df_, padding=0):
+def ttp_style(ax, df_,
+	padding=0,
+	rotate_xticks=True,
+	):
 	#place and null major ticks (we still need them for the grid)
 	ax.xaxis.set_major_locator(ticker.LinearLocator(len(df_.index)+1))
 	ax.xaxis.set_major_formatter(ticker.NullFormatter())
@@ -118,8 +121,9 @@ def ttp_style(ax, df_, padding=0):
 	for label in ax.yaxis.get_minorticklabels():
 		label.set_visible(True)
 
-	#Rotate ytick labels
-	plt.setp(ax.xaxis.get_minorticklabels(), rotation=90)
+	#Rotate xticks
+	if rotate_xticks:
+		plt.setp(ax.xaxis.get_minorticklabels(), rotation=90)
 
 	# create grid
 	ax.xaxis.grid(True, which='major', color='1', linestyle='-')
