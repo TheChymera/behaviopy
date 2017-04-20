@@ -149,7 +149,7 @@ def manual_events(recording_path, trial_duration, skiptime=0, events={}, bracket
 	win.close()
 	return
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 	# recording_path =u"/home/chymera/data/cameras/nd750/a/nd750_a0078.mkv"
 	# bracket = "34-66,"
 	# bracket = ""
