@@ -294,6 +294,7 @@ def control_first_reordering(df, hue_column):
 	return df
 
 def expandable_ttest(df,
+	colorset=QUALITATIVE_COLORSET,
 	compare="Treatment",
 	comparisons={"Period [days]":[]},
 	datacolumn_label="Sucrose Preference Ratio",
@@ -335,12 +336,13 @@ def expandable_ttest(df,
 		df = control_first_reordering(df, "Treatment")
 
 	plt.style.use('ggplot')
-	sns.swarmplot(x=comparison_instances_label,y=datacolumn_label, hue=compare, data=df, palette=sns.color_palette(QUALITATIVE_COLORSET), split=True)
+	sns.swarmplot(x=comparison_instances_label,y=datacolumn_label, hue=compare, data=df, palette=sns.color_palette(colorset), split=True)
 	plt.legend(loc=legend_loc)
 
 	add_significance(df, datacolumn_label, compare=compare, over=comparison_instances_label)
 
 def forced_swim_timecourse(df,
+	colorset=QUALITATIVE_COLORSET,
 	datacolumn_label="Immobility Ratio",
 	legend_loc="best",
 	plotstyle="tsplot",
@@ -377,8 +379,8 @@ def forced_swim_timecourse(df,
 
 	plt.style.use('ggplot')
 	if plotstyle == "tsplot":
-		myplot = sns.tsplot(time=time_label, value=datacolumn_label, condition="Treatment", unit="Identifier", data=df, err_style="unit_traces", color=sns.color_palette(QUALITATIVE_COLORSET))
+		myplot = sns.tsplot(time=time_label, value=datacolumn_label, condition="Treatment", unit="Identifier", data=df, err_style="unit_traces", color=sns.color_palette(colorset))
 		myplot.set_xticks(list(set(df[time_label])))
 	elif plotstyle == "pointplot":
-		sns.pointplot(x=time_label, y=datacolumn_label, hue="Treatment", data=df, palette=sns.color_palette(QUALITATIVE_COLORSET), legend_out=False, dodge=0.1)
+		sns.pointplot(x=time_label, y=datacolumn_label, hue="Treatment", data=df, palette=sns.color_palette(colorset), legend_out=False, dodge=0.1)
 	plt.legend(loc=legend_loc)
