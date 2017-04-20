@@ -9,6 +9,7 @@ def manual_events(recording_path, trial_duration, skiptime=0, events={}, bracket
 	"""Evaluate a behavioural recording.
 	E.g. for forced swim test, press enter when the experiment starts and s/i to annotate the onset of the respective behaviours.
 	!!! Add optional instructons screen !!!
+	Mention e.g. that you need to press return to start the evaluation period.
 
 	Parameters
 	----------
