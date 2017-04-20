@@ -84,7 +84,7 @@ def timetable(reference_df, x_key,
 				pass
 
 	#GET FIRST AND LAST DATE
-	dates = get_dates(reference_df, [shade, saturate])
+	dates = get_dates(reference_df, [[i for i in shade if i], [i for i in saturate if i]])
 	try:
 		dates = [dt.datetime.strptime(i.split(" ")[0], "%Y-%m-%d").date() for i in dates]
 	except AttributeError:
@@ -193,8 +193,8 @@ def timetable(reference_df, x_key,
 					start=False
 			elif isinstance(entry, str):
 				filtered_df = reference_df[reference_df[x_key] == x_val]
-				active_dates = list(set(filtered_df[entry]))
 				try:
+					active_dates = list(set(filtered_df[entry]))
 					df_.set_value(active_dates, x_val, 1)
 				except KeyError:
 					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_dates))
@@ -205,6 +205,8 @@ def timetable(reference_df, x_key,
 
 	#draw on top of frames
 	for color_ix, entry in enumerate(draw):
+		if not entry:
+			pass
 		for x_ix, x_val in enumerate(x_vals):
 			if isinstance(entry, dict):
 				for key in entry:
@@ -239,7 +241,10 @@ def timetable(reference_df, x_key,
 					start=False
 			if isinstance(entry, str):
 				filtered_df = reference_df[reference_df[x_key] == x_val]
-				active_date = list(set(filtered_df[entry]))[0]
+				try:
+					active_date = list(set(filtered_df[entry]))[0]
+				except KeyError:
+					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
 				try:
 					active_date = dt.datetime.strptime(active_date.split(" ")[0], "%Y-%m-%d").date()
 				except AttributeError:
@@ -248,14 +253,14 @@ def timetable(reference_df, x_key,
 					delta = active_date-window_start
 					day = delta.days+1
 					ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=QUALITATIVE_COLORSET[color_ix]))
-				except KeyError:
-					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_dates))
+				except (KeyError, TypeError):
+					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
 	plt.hold(True)
 
 	if real_dates:
-		ax = ttp_style(ax, df_)
+		ax = ttp_style(ax, df_, rotate_xticks=True)
 	else:
-		ax = ttp_style(ax, df_, padding)
+		ax = ttp_style(ax, df_, padding, rotate_xticks=False)
 		plt.xlabel("Days")
 	plt.ylabel(" ".join(x_key.split("_")).replace("id","ID"))
 
