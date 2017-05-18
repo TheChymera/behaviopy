@@ -27,7 +27,7 @@ def add_significance(df, datacolumn, compare, over):
 	comparisons = list(collections.OrderedDict.fromkeys(df[over]))
 	compare_categories = list(set(df[compare]))
 	line_width = mpl.rcParams['lines.linewidth']
-	label_size = mpl.rcParams['axes.labelsize']
+	label_size = mpl.rcParams['xtick.labelsize']
 	for ix, comparison in enumerate(comparisons):
 		compare_vals=[]
 		for compare_category in compare_categories:
