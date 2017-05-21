@@ -1,8 +1,8 @@
 import collections
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from matplotlib import rcParams
 from scipy import stats
 from matplotlib.colors import LinearSegmentedColormap
 
@@ -26,8 +26,8 @@ def add_significance(df, datacolumn, compare, over):
 	y, h, col = df[datacolumn].max() + 0.1, 0.1, '0.4'
 	comparisons = list(collections.OrderedDict.fromkeys(df[over]))
 	compare_categories = list(set(df[compare]))
-	line_width = mpl.rcParams['lines.linewidth']
-	label_size = mpl.rcParams['xtick.labelsize']
+	line_width = rcParams['lines.linewidth']
+	label_size = rcParams['xtick.labelsize']
 	for ix, comparison in enumerate(comparisons):
 		compare_vals=[]
 		for compare_category in compare_categories:
