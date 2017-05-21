@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 from os import path
+from matplotlib import rcParams
 from sqlalchemy import create_engine, or_, inspection
 from matplotlib.colors import ListedColormap
 from matplotlib.collections import PatchCollection
@@ -21,13 +22,12 @@ except (ValueError, SystemError):
 	from utils import *
 	from plot_utils import *
 
-
-import seaborn as sns
-sns.set_style("white", {'legend.frameon': True})
+import seaborn.apionly as sns
 
 QUALITATIVE_COLORSET = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
 def timetable(reference_df, x_key,
+	behaviopy_style=True,
 	colorlist=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
 	draw=[],
 	padding=3,
@@ -73,6 +73,10 @@ def timetable(reference_df, x_key,
 	window_start : string
 	A datetime-formatted string (e.g. "2016,12,18") to apply as the timetable start date (overrides autodetected start).
 	"""
+
+	if behaviopy_style:
+		plt.style.use(u'seaborn-darkgrid')
+		plt.style.use('ggplot')
 
 	#truncate dates
 	for col in reference_df.columns:
@@ -300,6 +304,7 @@ def expandable_ttest(df,
 	datacolumn_label="Sucrose Preference Ratio",
 	legend_loc="best",
 	rename_treatments={},
+	bp_style=False,
 	):
 	"""High-level interface for plotting of one or multiple related t-tests.
 
@@ -323,6 +328,14 @@ def expandable_ttest(df,
 
 	rename_treatments : dict, optional
 	Dictionary with strings as keys and values used to map treatment names onto new stings.
+
+	bp_style : bool, optional
+	Whether to apply the default behaviopy style.
+
+	Notes
+	-----
+
+	Seaborn's `sns.swarmplot()` does not read rcParams by itself, so we need to pass it `size=rcParams['lines.markersize']` to correctly set the marker size.
 	"""
 
 	comparison_instances_label = list(comparisons.keys())[0]
@@ -335,8 +348,20 @@ def expandable_ttest(df,
 			df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]
 		df = control_first_reordering(df, "Treatment")
 
-	plt.style.use('ggplot')
-	sns.swarmplot(x=comparison_instances_label,y=datacolumn_label, hue=compare, data=df, palette=sns.color_palette(colorset), split=True)
+	if bp_style:
+		sns.set_style("white", {'legend.frameon': True})
+		plt.style.use(u'seaborn-darkgrid')
+		plt.style.use(u'ggplot')
+
+	sns.swarmplot(
+		x=comparison_instances_label,
+		y=datacolumn_label,
+		hue=compare,
+		data=df,
+		palette=sns.color_palette(colorset),
+		split=True,
+		size=rcParams['lines.markersize'],
+		)
 	plt.legend(loc=legend_loc)
 
 	add_significance(df, datacolumn_label, compare=compare, over=comparison_instances_label)
@@ -376,7 +401,6 @@ def forced_swim_timecourse(df,
 	for key in rename_treatments:
 		df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]
 	df = control_first_reordering(df, "Treatment")
-
 	plt.style.use('ggplot')
 	if plotstyle == "tsplot":
 		myplot = sns.tsplot(time=time_label, value=datacolumn_label, condition="Treatment", unit="Identifier", data=df, err_style="unit_traces", color=sns.color_palette(colorset))
