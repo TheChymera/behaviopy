@@ -8,9 +8,9 @@ from scipy import stats
 from matplotlib.colors import LinearSegmentedColormap
 
 def apply_bp_style():
-	sns.set_style("white", {'legend.frameon': True})
-	plt.style.use(u'seaborn-darkgrid')
-	plt.style.use(u'ggplot')
+	plt.style.use(u"seaborn-darkgrid")
+	sns.set_style("white", {"legend.frameon": True})
+	plt.style.use(u"ggplot")
 
 def add_significance(df, datacolumn, compare, over):
 	"""Print significance level on 2-item comparison plots (also works with multiple 2-item comparisons)
