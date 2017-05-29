@@ -9,10 +9,8 @@ import matplotlib.patches as mpatches
 
 from os import path
 from matplotlib import rcParams
-from sqlalchemy import create_engine, or_, inspection
 from matplotlib.colors import ListedColormap
 from matplotlib.collections import PatchCollection
-from sqlalchemy.orm import sessionmaker, aliased, with_polymorphic, joinedload_all
 
 #python 2/3 compatible relative imports
 try:
