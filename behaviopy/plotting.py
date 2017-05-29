@@ -27,7 +27,7 @@ import seaborn.apionly as sns
 QUALITATIVE_COLORSET = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
 def timetable(reference_df, x_key,
-	behaviopy_style=True,
+	bp_style=True,
 	colorlist=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
 	draw=[],
 	padding=3,
@@ -48,6 +48,9 @@ def timetable(reference_df, x_key,
 
 	x_key : string
 	Column from `reference_df` for the values in which to create rows in the timetable.
+
+	bp_style : bool, optional
+	Whether to apply the default behaviopy style.
 
 	colorlist : list
 	A list containing matplotlib-compatible colors to be used for shading.
@@ -74,7 +77,7 @@ def timetable(reference_df, x_key,
 	A datetime-formatted string (e.g. "2016,12,18") to apply as the timetable start date (overrides autodetected start).
 	"""
 
-	if behaviopy_style:
+	if bp_style:
 		plt.style.use(u'seaborn-darkgrid')
 		plt.style.use('ggplot')
 
@@ -304,7 +307,7 @@ def expandable_ttest(df,
 	datacolumn_label="Sucrose Preference Ratio",
 	legend_loc="best",
 	rename_treatments={},
-	bp_style=False,
+	bp_style=True,
 	):
 	"""High-level interface for plotting of one or multiple related t-tests.
 
@@ -349,9 +352,7 @@ def expandable_ttest(df,
 		df = control_first_reordering(df, "Treatment")
 
 	if bp_style:
-		sns.set_style("white", {'legend.frameon': True})
-		plt.style.use(u'seaborn-darkgrid')
-		plt.style.use(u'ggplot')
+		apply_bp_style()
 
 	sns.swarmplot(
 		x=comparison_instances_label,
@@ -367,6 +368,7 @@ def expandable_ttest(df,
 	add_significance(df, datacolumn_label, compare=compare, over=comparison_instances_label)
 
 def forced_swim_timecourse(df,
+	bp_style=True,
 	colorset=QUALITATIVE_COLORSET,
 	datacolumn_label="Immobility Ratio",
 	legend_loc="best",
@@ -381,6 +383,9 @@ def forced_swim_timecourse(df,
 
 	df : Pandas Dataframe
 	Pandas Dataframe containing the experimental data.
+
+	bp_style : bool, optional
+	Whether to apply the default behaviopy style.
 
 	datacolumn_label : string, optional
 	A column name from df, the values in which column give the data to plot.
@@ -401,7 +406,8 @@ def forced_swim_timecourse(df,
 	for key in rename_treatments:
 		df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]
 	df = control_first_reordering(df, "Treatment")
-	plt.style.use('ggplot')
+	if bp_style:
+		apply_bp_style()
 	if plotstyle == "tsplot":
 		myplot = sns.tsplot(time=time_label, value=datacolumn_label, condition="Treatment", unit="Identifier", data=df, err_style="unit_traces", color=sns.color_palette(colorset))
 		myplot.set_xticks(list(set(df[time_label])))
