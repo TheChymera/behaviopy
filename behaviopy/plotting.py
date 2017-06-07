@@ -2,10 +2,11 @@ __author__="Horea Christian"
 import sys
 import time
 import datetime as dt
-import pandas as pd
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import matplotlib.patches as mpatches
+import pandas as pd #if pandas is imported before matplotlib.pyplot, errors such as `ImportError: Gtk3 backend requires pygobject to be installed.` have ensued.
+
 
 from os import path
 from matplotlib import rcParams
