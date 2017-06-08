@@ -295,7 +295,7 @@ def control_first_reordering(df, hue_column):
 			noncontrols.append(hue)
 	hue_ordering.extend(noncontrols)
 	df[hue_column] = pd.Categorical(df[hue_column], hue_ordering)
-	df.sort(hue_column)
+	df.sort_values(hue_column)
 
 	return df
 
