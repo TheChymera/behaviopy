@@ -2,10 +2,11 @@ __author__="Horea Christian"
 import sys
 import time
 import datetime as dt
-import pandas as pd
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import matplotlib.patches as mpatches
+import pandas as pd #if pandas is imported before matplotlib.pyplot, errors such as `ImportError: Gtk3 backend requires pygobject to be installed.` have ensued.
+
 
 from os import path
 from matplotlib import rcParams
@@ -294,7 +295,7 @@ def control_first_reordering(df, hue_column):
 			noncontrols.append(hue)
 	hue_ordering.extend(noncontrols)
 	df[hue_column] = pd.Categorical(df[hue_column], hue_ordering)
-	df.sort(hue_column)
+	df.sort_values(hue_column)
 
 	return df
 
@@ -350,7 +351,9 @@ def expandable_ttest(df,
 		df = control_first_reordering(df, "Treatment")
 
 	if bp_style:
-		apply_bp_style()
+		sns.set_style("white", {'legend.frameon': True})
+		plt.style.use(u'seaborn-darkgrid')
+		plt.style.use(u'ggplot')
 
 	sns.swarmplot(
 		x=comparison_instances_label,
@@ -405,7 +408,9 @@ def forced_swim_timecourse(df,
 		df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]
 	df = control_first_reordering(df, "Treatment")
 	if bp_style:
-		apply_bp_style()
+		sns.set_style("white", {'legend.frameon': True})
+		plt.style.use(u'seaborn-darkgrid')
+		plt.style.use(u'ggplot')
 	if plotstyle == "tsplot":
 		myplot = sns.tsplot(time=time_label, value=datacolumn_label, condition="Treatment", unit="Identifier", data=df, err_style="unit_traces", color=sns.color_palette(colorset))
 		myplot.set_xticks(list(set(df[time_label])))
