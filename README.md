@@ -11,9 +11,9 @@ The following examples can be reproduced (contingent on dependency availability)
 
 ## Correlation Matrices
 
-![Correlation Matrix](http://chymera.eu/examples/behaviopy/corr.png "")
-![Correlation Matrix Significance](http://chymera.eu/examples/behaviopy/corr_p.png "")
-![Correlation Matrix Significance, Corrected](http://chymera.eu/examples/behaviopy/corr_pc.png "")
+![Correlation Matrix](http://www.chymera.eu/examples/behaviopy/corr.png "Correlation Matrix")
+![Correlation Matrix Significance](http://www.chymera.eu/examples/behaviopy/corr_p.png "")
+![Correlation Matrix Significance, Corrected](http://www.chymera.eu/examples/behaviopy/corr_pc.png "")
 
 ## Pointplot With Significance Levels
 
