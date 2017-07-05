@@ -364,7 +364,7 @@ def expandable_ttest(df,
 		split=True,
 		size=rcParams['lines.markersize'],
 		)
-	plt.legend(loc=legend_loc)
+	plt.legend(loc=legend_loc, frameon=True)
 
 	add_significance(df, datacolumn_label, compare=compare, over=comparison_instances_label)
 
@@ -416,4 +416,4 @@ def forced_swim_timecourse(df,
 		myplot.set_xticks(list(set(df[time_label])))
 	elif plotstyle == "pointplot":
 		sns.pointplot(x=time_label, y=datacolumn_label, hue="Treatment", data=df, palette=sns.color_palette(colorset), legend_out=False, dodge=0.1)
-	plt.legend(loc=legend_loc)
+	plt.legend(loc=legend_loc, frameon=True)
