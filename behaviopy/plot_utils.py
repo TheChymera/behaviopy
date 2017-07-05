@@ -28,8 +28,8 @@ def add_significance(df, datacolumn, compare, over):
 		The column over which the plot is repeated. For each value in this column a new t-test is performed. NO correction is performed for multiple comparisons!
 	"""
 
-
-	y, h, col = df[datacolumn].max() + 0.1, 0.1, '0.4'
+	# h is the height of the vertical lines
+	y, h, col = df[datacolumn].max() + 0.05, 0.05, '0.4'
 	comparisons = list(collections.OrderedDict.fromkeys(df[over]))
 	compare_categories = list(set(df[compare]))
 	line_width = rcParams['lines.linewidth']
@@ -50,6 +50,7 @@ def add_significance(df, datacolumn, compare, over):
 		x1 = ix-0.2
 		x2 = ix+0.2
 		plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=line_width/3, c=col)
+		plt.plot([x1, x1, x2, x2], [y, y+h*2, y+h*2, y], lw=0, c=col)
 		plt.text((x1+x2)*0.5, y+h, "p = {:.2g}".format(p_value), ha='center', va='bottom', color=col, fontsize=label_size)
 
 def add_color(cMap, blank_color):
