@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from os import path
 
-import plotting
 from abbreviations import *
 from utils import get_data_dir
 
@@ -18,7 +17,6 @@ def pet_behaviour(
 	y_cols=["assisted rearing", "unassisted rearing", "wall walking", "center walking", "object interaction", "body grooming", "head grooming", "risk assessment", "immobility"],
 	):
 
-	#imprting in function, as this otherwise overwrites the more widely used styles from the plotting module (`.plotting`)
 	import regression
 
 	data_dir = get_data_dir("herde2017", DATA_ROOT_VARIANTS)
@@ -58,6 +56,8 @@ def pet_behaviour(
 		)
 
 def forced_swim_ttest():
+	import plotting
+
 	data_dir = get_data_dir("generic", DATA_ROOT_VARIANTS)
 	df_path = path.join(data_dir,"forcedswim_bins.csv")
 	df = pd.read_csv(df_path)
@@ -70,6 +70,8 @@ def forced_swim_ttest():
 		)
 
 def forced_swim_ts(plot_style):
+	import plotting
+	
 	data_dir = get_data_dir("generic", DATA_ROOT_VARIANTS)
 	df_path = path.join(data_dir,"forcedswim_ts.csv")
 	df = pd.read_csv(df_path)
@@ -81,6 +83,8 @@ def forced_swim_ts(plot_style):
 		)
 
 def sucrose_preference_treatment():
+	import plotting
+	
 	data_dir = get_data_dir("generic", DATA_ROOT_VARIANTS)
 	df_path = path.join(data_dir,"sucrosepreference_treatment.csv")
 	df = pd.read_csv(df_path)
@@ -93,6 +97,8 @@ def sucrose_preference_treatment():
 		)
 
 def sucrose_preference_side():
+	import plotting
+	
 	data_dir = get_data_dir("generic", DATA_ROOT_VARIANTS)
 	df_path = path.join(data_dir,"sucrosepreference_side.csv")
 	df = pd.read_csv(df_path)
@@ -105,6 +111,8 @@ def sucrose_preference_side():
 		)
 
 def timetable():
+	import plotting
+	
 	data_dir = get_data_dir("generic", DATA_ROOT_VARIANTS)
 	df_path = path.join(data_dir,"timetable.csv")
 	df = pd.read_csv(df_path)
