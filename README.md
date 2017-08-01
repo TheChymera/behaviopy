@@ -4,12 +4,12 @@ BehavioPy is a python toolkit providing evaluation (e.g. event tracking) and plo
 Manual event tracking is done via a simple and configurable PsychoPy-based interface.
 Plotting functions are designed to work with preformatted data in CSV format (e.g. as exported by pandas), and use Seaborn and custom BehavioPy styles for maximum beautification.
 
-# Examples
+## Examples
 
 These are some of the plot types which BehavioPy can generate. 
 The following examples can be reproduced (contingent on dependency availability) solely from the [example functions](behaviopy/examples.py) and [data](example_data) distributed in this repository.
 
-## Correlation Matrices
+### Correlation Matrices
 
 ![Correlation Matrix](http://www.chymera.eu/examples/behaviopy/corr.png "Correlation Matrix")
 
@@ -17,17 +17,17 @@ The following examples can be reproduced (contingent on dependency availability)
 
 ![Correlation Matrix Significance, Corrected](http://www.chymera.eu/examples/behaviopy/corr_pc.png "")
 
-## Pointplot With Significance Levels
+### Pointplot With Significance Levels
 
 ![Forced Swim Test Pointplot](http://chymera.eu/examples/behaviopy/fst_p.png "")
 ![Forced Swim Test Pointplot](http://chymera.eu/examples/behaviopy/sp_p.png "")
 
-## Timeseries Plots
+### Timeseries Plots
 
 ![Forced Swim Test Timeseries](http://chymera.eu/examples/behaviopy/fst_ts.png "")
 
 
-# Dependencies
+## Dependencies
 
 * [Matplotlib](http://matplotlib.org/)
 * [NumPy](http://www.numpy.org/)
