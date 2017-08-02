@@ -42,21 +42,61 @@ def p_from_r(r,n):
 		prob = stats.betai(0.5*df, 0.5, df / (df + t_squared))
 	return prob
 
-def regression_matrix(df_x_path,
+def correlation_matrix(df_x_path,
+	df_y_path=None,
 	x_cols=None,
 	y_cols=None,
 	x_dict=None,
 	y_dict=None,
-	df_y_path=None,
-	output="pearson",
-	roi_normalize=True,
-	behav_normalize=False,
+	x_normalize=True,
+	y_normalize=False,
 	correction="fdr_bh",
-	animals=None,
+	entries=None,
+	fwer=0.05,
+	output="pearson",
 	save_as=None,
 	xlabel_rotation="vertical",
-	fwer=0.05,
 	):
+	"""
+	Highly parameterized correlation matrix of variables given by the columns of one or two dataframes.
+
+	Parameters
+	----------
+	df_x_path : str
+		Path to dataframe from which to select the columns as correlation matrix variables.
+	df_y_path : str, optional
+		Path to second dataframe from which to select the columns as correlation matrix variables.
+	x_cols : list, optional
+		Exclusive list of columns from `df_x_path` to use as correlation matrix variables.
+	y_cols : list, optional
+		Exclusive list of columns from `df_y_path` to use as correlation matrix variables.
+	x_dict : dict, optional
+		Dictionary based on which to rename the correlation matrix variables derived from `df_x_path` columns.
+	y_dict : dict, optional
+		Dictionary based on which to rename the correlation matrix variables derived from `df_y_path` columns.
+	x_normalize : bool, optional
+		Whether to normalize (divide by the mean) the rows from `df_x_path`.
+	y_normalize : bool, optional
+		Whether to normalize (divide by the mean) the rows from `df_y_path`.
+	correction : str, optional
+		Values from `statsmodels.stats.multitest.multitest_methods_names` specifying which mthod to use for multiple testing correction.
+	entries : list, optional
+		A list of values specifying which row indices from `df_x_path` and `df_y_path` to consider for the correlation matrix.
+	fwer : float, optional
+		Family-wise error rate to use for the multiple testing correction.
+	output : {"p", "pearsonr", "p_corrected", "slope"}
+		Which correlation metric to display on the matrix.
+	save_as : string, optional
+		Path of output figure.
+	xlabel_rotation : {"vertical", int}, optional
+		How to rotate the x-axis labels.
+
+	Returns
+	-------
+	dfc : pandas.DataFrame
+		Pandas dataframe of the correlation matrix.
+	"""
+
 
 	if xlabel_rotation != "vertical":
 		ha="left"
@@ -74,12 +114,12 @@ def regression_matrix(df_x_path,
 			y_cols = list(dfy.columns)
 		df = pd.concat([df, dfy], axis=1)
 
-	if animals:
-		df = df.loc[animals]
+	if entries:
+		df = df.loc[entries]
 
-	if roi_normalize:
+	if x_normalize:
 		df[x_cols] = df[x_cols].apply(lambda x: (x / x.mean()))
-	if behav_normalize:
+	if y_normalize:
 		df[y_cols] = df[y_cols].apply(lambda x: (x / x.mean()))
 
 	if output == "pearsonr":
@@ -133,12 +173,27 @@ def regression_matrix(df_x_path,
 
 	return dfc
 
-def failsafe_apply_dict(mylist, dict):
+def failsafe_apply_dict(mylist, dictionary):
+	"""
+	Translate the values in a list based upon a dictionary, if the respective values are keys in the dictionary - otherwise preserve the values.
+
+	Parameters
+	----------
+	mylist : list
+		A list of values.
+	dictionary : dict
+		A dictionary containing (some of) the values of `mylist` as keys.
+
+	Returns
+	-------
+	list
+		A list of translated values.
+	"""
 	#we create a new list, to not modify the old one in-place
 	converted_list = []
 	for ix, i in enumerate(mylist):
 		try:
-			converted_value = dict[i]
+			converted_value = dictionary[i]
 		except KeyError:
 			continue
 		else:
