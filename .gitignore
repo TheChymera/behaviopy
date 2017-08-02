@@ -30,8 +30,7 @@ Untitled*.ipynb
 output/*
 results/*
 */results/
-image-*.pdf
-image.pdf
+*.pdf
 image.pmg
 image*.png
 *.backup/
