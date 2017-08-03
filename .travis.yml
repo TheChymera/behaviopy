@@ -9,4 +9,4 @@ install:
   - pip install .
 script: 
   - py.test
-  for f in behaviopy/examples/*.py; do python "$f"; done
+  - for f in behaviopy/examples/*.py; do python "$f"; done
