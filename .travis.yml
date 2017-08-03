@@ -6,5 +6,5 @@ install:
   - travis_wait 20 pip install -r requirements.txt
   - pip install .
 script: 
-  - py.test
-  - for f in behaviopy/examples/*.py; do python "$f"; done
+  - cd behaviopy/examples
+  - for f in *.py ; do python '$f'; done
