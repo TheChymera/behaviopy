@@ -7,7 +7,7 @@ import matplotlib.cm as cm
 import matplotlib.colors as colors
 from matplotlib import rcParams
 import statsmodels.api as sm
-from statsmodels.sandbox.stats.multicomp import multipletests
+from statsmodels.stats.multitest import multipletests
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
 plt.style.use('ggplot')
