@@ -313,8 +313,8 @@ def expandable_ttest(df,
 	Parameters
 	----------
 
-	df : Pandas Dataframe
-	Pandas Dataframe containing the experimental data.
+	df : {pandas.Dataframe, string}
+	Pandas Dataframe containing the experimental data, or path pointing to a csv containing such data.
 
 	compare : string, optional
 	Which parameter to categorize the comparison by. Must be a column name from df.
@@ -339,6 +339,10 @@ def expandable_ttest(df,
 
 	Seaborn's `sns.swarmplot()` does not read rcParams by itself, so we need to pass it `size=rcParams['lines.markersize']` to correctly set the marker size.
 	"""
+
+	if isinstance(df, str):
+		df = path.abspath(path.expanduser(df))
+		df = pd.read_csv(df)
 
 	comparison_instances_label = list(comparisons.keys())[0]
 	comparison_instances = list(comparisons.values())[0]
