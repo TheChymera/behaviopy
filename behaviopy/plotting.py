@@ -307,6 +307,7 @@ def expandable_ttest(df,
 	legend_loc="best",
 	rename_treatments={},
 	bp_style=True,
+	save_as=False,
 	):
 	"""High-level interface for plotting of one or multiple related t-tests.
 
@@ -371,6 +372,10 @@ def expandable_ttest(df,
 	plt.legend(loc=legend_loc, frameon=True)
 
 	add_significance(df, datacolumn_label, compare=compare, over=comparison_instances_label)
+
+	if save_as:
+		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
+
 
 def forced_swim_timecourse(df,
 	bp_style=True,
