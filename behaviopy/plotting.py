@@ -385,14 +385,15 @@ def forced_swim_timecourse(df,
 	plotstyle="tsplot",
 	rename_treatments={},
 	time_label="interval [1 min]",
+	save_as=False,
 	):
 	"""Plot timecourse of forced swim measurements.
 
 	Parameters
 	----------
 
-	df : Pandas Dataframe
-	Pandas Dataframe containing the experimental data.
+        df : {pandas.Dataframe, string}
+        Pandas Dataframe containing the experimental data, or path pointing to a csv containing such data.
 
 	bp_style : bool, optional
 	Whether to apply the default behaviopy style.
@@ -413,6 +414,10 @@ def forced_swim_timecourse(df,
 	A column name from df, the values in which column give the time pointd of the data.
 	"""
 
+	if isinstance(df, str):
+		df = path.abspath(path.expanduser(df))
+		df = pd.read_csv(df)
+
 	for key in rename_treatments:
 		df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]
 	df = control_first_reordering(df, "Treatment")
@@ -426,3 +431,7 @@ def forced_swim_timecourse(df,
 	elif plotstyle == "pointplot":
 		sns.pointplot(x=time_label, y=datacolumn_label, hue="Treatment", data=df, palette=sns.color_palette(colorset), legend_out=False, dodge=0.1)
 	plt.legend(loc=legend_loc, frameon=True)
+
+	if save_as:
+                plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
+
