@@ -12,20 +12,6 @@ DATA_ROOT_VARIANTS = [
 	path.join(THISSCRIPTSPATH,"..","example_data"),
 	]
 
-def sucrose_preference_treatment():
-	import plotting
-
-	data_dir = get_data_dir("generic", DATA_ROOT_VARIANTS)
-	df_path = path.join(data_dir,"sucrosepreference_treatment.csv")
-	df = pd.read_csv(df_path)
-
-	plotting.expandable_ttest(df,
-		compare="Treatment",
-		comparisons={"Period [days]":[]},
-		datacolumn_label="Sucrose Preference Ratio",
-		rename_treatments={"cFluDW":"Fluoxetine","cFluDW_":"Control"},
-		)
-
 def sucrose_preference_side():
 	import plotting
 
