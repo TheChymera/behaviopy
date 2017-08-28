@@ -1,6 +1,6 @@
 from os import path
 
-from behaviopy.regression import correlation_matrix
+from behaviopy.analysis import correlation_matrix
 from behaviopy.abbreviations import *
 
 data_dir = path.join(path.dirname(path.realpath(__file__)),"../../example_data/herde2017")
