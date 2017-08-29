@@ -26,7 +26,6 @@ import seaborn.apionly as sns
 QUALITATIVE_COLORSET = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
 def timetable(reference_df, x_key,
-	bp_style=True,
 	colorlist=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
 	draw=[],
 	padding=3,
@@ -36,6 +35,7 @@ def timetable(reference_df, x_key,
 	shade=[],
 	window_end="",
 	window_start="",
+	bp_style=True,
 	):
 	"""Plot a timetable
 
@@ -116,8 +116,11 @@ def timetable(reference_df, x_key,
 	cMap = add_color(cm.viridis, 0.9)
 	#1.15 seems to conserve square aspect for the cells.
 	#This is difficult to get 100% right as the fig_shape is set for the figure (including tick labels etc.) and not just the axes
-	fig_shape = (window_length/1.15,len(x_vals))
-	fig, ax = plt.subplots(figsize=fig_shape , facecolor='#eeeeee', tight_layout=True)
+	if bp_style:
+		fig_shape = (window_length/1.15,len(x_vals))
+		fig, ax = plt.subplots(figsize=fig_shape , facecolor='#eeeeee', tight_layout=True)
+	else:
+		fig, ax = plt.subplots()
 
 	#shade frames
 	df_ = df.copy(deep=True)
