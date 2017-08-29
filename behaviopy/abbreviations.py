@@ -31,3 +31,20 @@ BEHAVIOUR_ABBREV = {
 	"unassisted rearing":"U. Rear.",
 	"wall walking":"Wall Walk.",
 	}
+
+AGGRESSIVE_BEHAVIOUR_ABBREV = {
+	"ambulation":"Ambul",
+	"assisted rearing":"AR",
+	"body grooming":"BG",
+	"center walking":"CW",
+	"exploration":"Exploration",
+	"exploration - no wall":"Exp. - no wall",
+	"grooming":"Groom.",
+	"head grooming":"HG",
+	"immobility":"Im/null",
+	"object interaction":"Obj",
+	"rearing":"Rear.",
+	"risk assessment":"RA",
+	"unassisted rearing":"UR",
+	"wall walking":"WW",
+	}
