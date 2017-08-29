@@ -1,5 +1,5 @@
 import pandas as pd
-import plotting
+from behaviopy import plotting
 from os import path
 
 data_dir = path.join(path.dirname(path.realpath(__file__)),"../../example_data/generic")
