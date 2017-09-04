@@ -150,7 +150,7 @@ def timetable(reference_df, x_key,
 							df_.set_value(active_date, x_val, df_.get_value(active_date, x_val)+c_step)
 					elif start:
 						df_.set_value(start, x_val, df_.get_value(start, x_val)+c_step)
-			elif isinstance(entry, str):
+			else:
 				filtered_df = reference_df[reference_df[x_key] == x_val]
 				active_dates = list(set(filtered_df[entry]))
 				try:
@@ -199,7 +199,7 @@ def timetable(reference_df, x_key,
 						df_.set_value(start, x_val, df_.get_value(start, x_val)+c_step)
 					# we need this to make sure start does not remain set for the next iteration:
 					start=False
-			elif isinstance(entry, str):
+			else:
 				filtered_df = reference_df[reference_df[x_key] == x_val]
 				try:
 					active_dates = list(set(filtered_df[entry]))
@@ -246,7 +246,7 @@ def timetable(reference_df, x_key,
 						ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=QUALITATIVE_COLORSET[color_ix]))
 					# we need this to make sure start does not remain set for the next iteration:
 					start=False
-			if isinstance(entry, str):
+			else:
 				filtered_df = reference_df[reference_df[x_key] == x_val]
 				try:
 					active_date = list(set(filtered_df[entry]))[0]
@@ -419,9 +419,14 @@ def forced_swim_timecourse(df,
 	A column name from df, the values in which column give the time pointd of the data.
 	"""
 
-	if isinstance(df, str):
-		df = path.abspath(path.expanduser(df))
-		df = pd.read_csv(df)
+	try:
+		if isinstance(df, basestring):
+			df = path.abspath(path.expanduser(df))
+			df = pd.read_csv(df)
+	except NameError:
+		if isinstance(df, str):
+			df = path.abspath(path.expanduser(df))
+			df = pd.read_csv(df)
 
 	for key in rename_treatments:
 		df.loc[df["Treatment"] == key, "Treatment"] = rename_treatments[key]

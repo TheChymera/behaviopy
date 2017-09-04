@@ -37,14 +37,14 @@ def get_dates(df, parameters):
 	dates=[]
 	for parameter in parameters:
 		for entry in parameter:
-			if isinstance(entry, str):
-				notnull_df = df[pd.notnull(df[entry])]
-				dates.extend(list(set(notnull_df[entry])))
 			if isinstance(entry, dict):
 				for key in entry:
 					filtered_df = df[df[key] == entry[key][0]]
 					for col in entry[key][1:]:
 						dates.extend(list(set(filtered_df[col])))
+			else:
+				notnull_df = df[pd.notnull(df[entry])]
+				dates.extend(list(set(notnull_df[entry])))
 	dates = list(set(dates))
 	checked_dates=[]
 	for dt in dates:
