@@ -24,6 +24,6 @@ plotting.timetable(df, "Animal_id",
 	saturate=saturate,
 	shade=shade,
 	window_end="2017,3,21",
-	save_plot="timetable.png",
+	save_as="timetable.png",
 	)
 
