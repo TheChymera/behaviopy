@@ -31,7 +31,7 @@ def timetable(reference_df, x_key,
 	padding=3,
 	real_dates=True,
 	saturate=[],
-	save_plot="",
+	save_as="",
 	shade=[],
 	window_end="",
 	window_start="",
@@ -166,7 +166,6 @@ def timetable(reference_df, x_key,
 	if not real_dates:
 		df_ = df_.set_index(np.arange(len(df_))-padding)
 	im = ax.pcolorfast(df_.T, cmap=add_color(cm.gray_r, 0.8), alpha=.5)
-	plt.hold(True)
 
 	#saturate frames
 	df_ = df.copy(deep=True)
@@ -210,7 +209,6 @@ def timetable(reference_df, x_key,
 	if not real_dates:
 		df_ = df_.set_index(np.arange(len(df_))-padding)
 	im = ax.pcolorfast(df_.T, cmap=ListedColormap(colorlist), vmin=0, vmax=len(colorlist)-1, alpha=.5)
-	plt.hold(True)
 
 	#draw on top of frames
 	for color_ix, entry in enumerate(draw):
@@ -264,7 +262,6 @@ def timetable(reference_df, x_key,
 					ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=QUALITATIVE_COLORSET[color_ix]))
 				except (KeyError, TypeError):
 					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
-	plt.hold(True)
 
 	if real_dates:
 		ax = ttp_style(ax, df_, rotate_xticks=True)
@@ -273,8 +270,8 @@ def timetable(reference_df, x_key,
 		plt.xlabel("Days")
 	plt.ylabel(" ".join(x_key.split("_")).replace("id","ID"))
 
-	if save_plot:
-		plt.savefig(path.abspath(path.expanduser(save_plot)), bbox_inches='tight')
+	if save_as:
+		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
 def control_first_reordering(df, hue_column):
 	"""Reorder the dataframe so that rows with control data show up first (this makes Seaborn assign them the first colors in the colorset).
