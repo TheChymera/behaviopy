@@ -13,20 +13,20 @@ The following examples can be reproduced (contingent on dependency availability)
 
 ### Correlation Matrices
 
-![Correlation Matrix](http://www.chymera.eu/examples/behaviopy/corr.png "Correlation Matrix")
+![Correlation Matrix](http://www.chymera.eu/img/examples/behaviopy/corr.png "Correlation Matrix")
 
-![Correlation Matrix Significance](http://www.chymera.eu/examples/behaviopy/corr_p.png "")
+![Correlation Matrix Significance](http://www.chymera.eu/img/examples/behaviopy/corr_p.png "")
 
-![Correlation Matrix Significance, Corrected](http://www.chymera.eu/examples/behaviopy/corr_pc.png "")
+![Correlation Matrix Significance, Corrected](http://www.chymera.eu/img/examples/behaviopy/corr_pc.png "")
 
 ### Pointplot With Significance Levels
 
-![Forced Swim Test Pointplot](http://chymera.eu/examples/behaviopy/fst_p.png "")
-![Forced Swim Test Pointplot](http://chymera.eu/examples/behaviopy/sp_p.png "")
+![Forced Swim Test Pointplot](http://chymera.eu/img/examples/behaviopy/fst_p.png "")
+![Forced Swim Test Pointplot](http://chymera.eu/img/examples/behaviopy/sp_p.png "")
 
 ### Timeseries Plots
 
-![Forced Swim Test Timeseries](http://chymera.eu/examples/behaviopy/fst_ts.png "")
+![Forced Swim Test Timeseries](http://chymera.eu/img/examples/behaviopy/fst_ts.png "")
 
 
 ## Dependencies
