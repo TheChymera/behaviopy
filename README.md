@@ -6,6 +6,10 @@ BehavioPy is a python toolkit providing evaluation (e.g. event tracking) and plo
 Manual event tracking is done via a simple and configurable PsychoPy-based interface.
 Plotting functions are designed to work with preformatted data in CSV format (e.g. as exported by pandas), and use Seaborn and custom BehavioPy styles for maximum beautification.
 
+### Presentations
+
+* [BehavioPy - Python Evaluation, Analysis, and Plotting for Behaviour and Physiology](https://bitbucket.org/TheChymera/behaviopy_repsep/raw/7d626813659efa1345efbf07faafaa9a6bcf3876/poster.pdf), at EuroSciPy 2017 in Erlangen (DE).
+
 ## Examples
 
 These are some of the plot types which BehavioPy can generate. 
