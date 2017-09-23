@@ -25,6 +25,32 @@ import seaborn.apionly as sns
 
 QUALITATIVE_COLORSET = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
+def weights(df,
+	time="relative_date",
+	weight="weight",
+	unit="Animal_id",
+	condition="treatment",
+	err_style="unit_traces",
+	order=None,
+	):
+	ax = sns.pointplot(
+		x=time,
+		y=weight,
+		units=unit,
+		data=df,
+		hue=condition,
+		dodge=True,
+		order=order,
+		)
+	#ax = sns.tsplot(
+	#	time=time,
+	#	value=weight,
+	#	unit=unit,
+	#	condition=condition,
+	#	data=df,
+	#	err_style=err_style,
+	#	)
+
 def timetable(reference_df, x_key,
 	colorlist=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
 	draw=[],
