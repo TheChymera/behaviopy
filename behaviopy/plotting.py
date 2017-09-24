@@ -32,7 +32,15 @@ def weights(df,
 	condition="treatment",
 	err_style="unit_traces",
 	order=None,
+	bp_style=True,
 	):
+	"""Plot a weights timecourse.
+	"""
+
+	if bp_style:
+		plt.style.use(u'seaborn-darkgrid')
+		plt.style.use('ggplot')
+
 	ax = sns.pointplot(
 		x=time,
 		y=weight,
@@ -42,6 +50,7 @@ def weights(df,
 		dodge=True,
 		order=order,
 		)
+
 	#ax = sns.tsplot(
 	#	time=time,
 	#	value=weight,
