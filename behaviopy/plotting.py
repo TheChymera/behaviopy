@@ -33,6 +33,7 @@ def weights(df,
 	err_style="unit_traces",
 	order=None,
 	bp_style=True,
+	save_as=''
 	):
 	"""Plot a weights timecourse.
 	"""
@@ -50,7 +51,6 @@ def weights(df,
 		dodge=True,
 		order=order,
 		)
-
 	#ax = sns.tsplot(
 	#	time=time,
 	#	value=weight,
@@ -59,6 +59,8 @@ def weights(df,
 	#	data=df,
 	#	err_style=err_style,
 	#	)
+	if save_as:
+		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
 def timetable(reference_df, x_key,
 	colorlist=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
