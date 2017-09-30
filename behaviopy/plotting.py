@@ -25,9 +25,9 @@ import seaborn.apionly as sns
 
 QUALITATIVE_COLORSET = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
-def weights(df,
-	time="relative_date",
-	weight="weight",
+def qualitative_times(df,
+	x="relative_date",
+	y="weight",
 	unit="Animal_id",
 	condition="treatment",
 	err_style="unit_traces",
@@ -35,7 +35,7 @@ def weights(df,
 	bp_style=True,
 	save_as=''
 	):
-	"""Plot a weights timecourse.
+	"""Plot a timecourse based on qualitative times (e.g. sessions).
 	"""
 
 	if bp_style:
@@ -51,14 +51,6 @@ def weights(df,
 		dodge=True,
 		order=order,
 		)
-	#ax = sns.tsplot(
-	#	time=time,
-	#	value=weight,
-	#	unit=unit,
-	#	condition=condition,
-	#	data=df,
-	#	err_style=err_style,
-	#	)
 	if save_as:
 		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
