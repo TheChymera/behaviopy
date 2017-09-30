@@ -58,7 +58,6 @@ def timetable(reference_df, x_key,
 	colorlist=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
 	draw=[],
 	padding=3,
-	real_dates=True,
 	saturate=[],
 	save_as="",
 	shade=[],
@@ -88,9 +87,6 @@ def timetable(reference_df, x_key,
 
 	padding : int
 	Number of days to bad the timetable window with (before and after the first and last scan respectively).
-
-	real_dates : boolean
-	Set to False to display dates relative to the first measurement.
 
 	shade: {list of str, list of dict}
 	Strings specify the columns for which to shade the datetimes. In dictionaries, the key gives a column to filter by; and if the first item in the value list matches the column value, the datetime in the second item in the value list will specify which datetimes to shade; if the value list contains three items, the datetimes in between that in the second item column and the third item column will be shaded.
@@ -192,8 +188,6 @@ def timetable(reference_df, x_key,
 						df_.set_value(active_date, x_val, df_.get_value(active_date, x_val)+c_step)
 					except KeyError:
 						pass
-	if not real_dates:
-		df_ = df_.set_index(np.arange(len(df_))-padding)
 	im = ax.pcolorfast(df_.T, cmap=add_color(cm.gray_r, 0.8), alpha=.5)
 
 	#saturate frames
@@ -235,8 +229,6 @@ def timetable(reference_df, x_key,
 					df_.set_value(active_dates, x_val, 1)
 				except KeyError:
 					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_dates))
-	if not real_dates:
-		df_ = df_.set_index(np.arange(len(df_))-padding)
 	im = ax.pcolorfast(df_.T, cmap=ListedColormap(colorlist), vmin=0, vmax=len(colorlist)-1, alpha=.5)
 
 	#draw on top of frames
@@ -292,8 +284,7 @@ def timetable(reference_df, x_key,
 				except (KeyError, TypeError):
 					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
 
-	if real_dates:
-		ax = ttp_style(ax, df_, rotate_xticks=True)
+	ax = ttp_style(ax, df_, rotate_xticks=True)
 	else:
 		ax = ttp_style(ax, df_, padding, rotate_xticks=False)
 		plt.xlabel("Days")
