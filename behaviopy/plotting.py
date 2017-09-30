@@ -55,8 +55,9 @@ def qualitative_times(df,
 		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
 def timetable(reference_df, x_key,
-	colorlist=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
+	shade_colors=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
 	draw=[],
+	draw_colors=QUALITATIVE_COLORSET,
 	padding=3,
 	saturate=[],
 	save_as="",
@@ -64,6 +65,7 @@ def timetable(reference_df, x_key,
 	window_end="",
 	window_start="",
 	bp_style=True,
+	integer_dates=False,
 	):
 	"""Plot a timetable
 
@@ -71,34 +73,27 @@ def timetable(reference_df, x_key,
 	----------
 
 	reference_df : Pandas DataFrame
-	Dataframe containing the data to plot. It needs to contain columns with datetime values.
-
+		Dataframe containing the data to plot. It needs to contain columns with datetime values.
 	x_key : string
-	Column from `reference_df` for the values in which to create rows in the timetable.
-
+		Column from `reference_df` for the values in which to create rows in the timetable.
 	bp_style : bool, optional
-	Whether to apply the default behaviopy style.
-
-	colorlist : list
-	A list containing matplotlib-compatible colors to be used for shading.
-
+		Whether to apply the default behaviopy style.
+	shade_colors : list
+		A list containing matplotlib-compatible colors to be used for shading.
+	draw_colors : list
+		A list containing matplotlib-compatible colors to be used for drawing.
 	draw: {list of str, list of dict}
-	Strings specify the columns for which to draw colored circles on the datetimes. In dictionaries, the key gives a column to filter by; and if the first item in the value list matches the column value, the datetime in the second item in the value list will specify which datetimes to shade; if the value list contains three items, the datetimes in between that in the second item column and the third item column will be shaded.
-
+		Strings specify the columns for which to draw colored circles on the datetimes. In dictionaries, the key gives a column to filter by; and if the first item in the value list matches the column value, the datetime in the second item in the value list will specify which datetimes to shade; if the value list contains three items, the datetimes in between that in the second item column and the third item column will be shaded.
 	padding : int
-	Number of days to bad the timetable window with (before and after the first and last scan respectively).
-
+		Number of days to bad the timetable window with (before and after the first and last scan respectively).
 	shade: {list of str, list of dict}
-	Strings specify the columns for which to shade the datetimes. In dictionaries, the key gives a column to filter by; and if the first item in the value list matches the column value, the datetime in the second item in the value list will specify which datetimes to shade; if the value list contains three items, the datetimes in between that in the second item column and the third item column will be shaded.
-
+		Strings specify the columns for which to shade the datetimes. In dictionaries, the key gives a column to filter by; and if the first item in the value list matches the column value, the datetime in the second item in the value list will specify which datetimes to shade; if the value list contains three items, the datetimes in between that in the second item column and the third item column will be shaded.
 	saturate: {list of str, list of dict}
-	Strings specify the columns for which to saturate the datetimes. In dictionaries, the key gives a column to filter by; and if the first item in the value list matches the column value, the datetime in the second item in the value list will specify which datetimes to saturate; if the value list contains three items, the datetimes in between that in the second item column and the third item column will be shaded.
-
+		Strings specify the columns for which to saturate the datetimes. In dictionaries, the key gives a column to filter by; and if the first item in the value list matches the column value, the datetime in the second item in the value list will specify which datetimes to saturate; if the value list contains three items, the datetimes in between that in the second item column and the third item column will be shaded.
 	window_end : string
-	A datetime-formatted string (e.g. "2016,12,18") to apply as the timetable end date (overrides autodetected end).
-
+		A datetime-formatted string (e.g. "2016,12,18") to apply as the timetable end date (overrides autodetected end).
 	window_start : string
-	A datetime-formatted string (e.g. "2016,12,18") to apply as the timetable start date (overrides autodetected start).
+		A datetime-formatted string (e.g. "2016,12,18") to apply as the timetable start date (overrides autodetected start).
 	"""
 
 	if bp_style:
@@ -131,6 +126,7 @@ def timetable(reference_df, x_key,
 
 	#create generic plotting dataframe
 	x_vals = list(set(reference_df[x_key]))
+	x_vals = sorted(x_vals)
 	datetime_index = [i for i in perdelta(window_start,window_end,dt.timedelta(days=1))]
 
 	df = pd.DataFrame(index=datetime_index, columns=x_vals)
@@ -188,6 +184,8 @@ def timetable(reference_df, x_key,
 						df_.set_value(active_date, x_val, df_.get_value(active_date, x_val)+c_step)
 					except KeyError:
 						pass
+	if integer_dates:
+		df_.index = df_.index.days.astype(int)
 	im = ax.pcolorfast(df_.T, cmap=add_color(cm.gray_r, 0.8), alpha=.5)
 
 	#saturate frames
@@ -229,7 +227,9 @@ def timetable(reference_df, x_key,
 					df_.set_value(active_dates, x_val, 1)
 				except KeyError:
 					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_dates))
-	im = ax.pcolorfast(df_.T, cmap=ListedColormap(colorlist), vmin=0, vmax=len(colorlist)-1, alpha=.5)
+	if integer_dates:
+		df_.index = df_.index.days.astype(int)
+	im = ax.pcolorfast(df_.T, cmap=ListedColormap(shade_colors), vmin=0, vmax=len(shade_colors)-1, alpha=.5)
 
 	#draw on top of frames
 	for color_ix, entry in enumerate(draw):
@@ -258,13 +258,13 @@ def timetable(reference_df, x_key,
 							for active_date in active_dates:
 								delta = active_date-window_start
 								day = delta.days+1
-								ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=QUALITATIVE_COLORSET[color_ix]))
+								ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=draw_colors[color_ix]))
 						except IndexError:
 							pass
 					elif start != False:
 						delta = start-window_start
 						day = delta.days+1
-						ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=QUALITATIVE_COLORSET[color_ix]))
+						ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=draw_colors[color_ix]))
 					# we need this to make sure start does not remain set for the next iteration:
 					start=False
 			else:
@@ -280,11 +280,16 @@ def timetable(reference_df, x_key,
 				try:
 					delta = active_date-window_start
 					day = delta.days+1
-					ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=QUALITATIVE_COLORSET[color_ix]))
+					ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=draw_colors[color_ix]))
 				except (KeyError, TypeError):
 					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
 
 	ax = ttp_style(ax, df_, rotate_xticks=True)
+	if integer_dates:
+		plt.xlabel("Days")
+		ax = ttp_style(ax, df_, padding, rotate_xticks=False)
+	else:
+		ax = ttp_style(ax, df_, rotate_xticks=True)
 	plt.ylabel(" ".join(x_key.split("_")).replace("id","ID"))
 
 	if save_as:
