@@ -261,7 +261,7 @@ def timetable(reference_df, x_key,
 								ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=QUALITATIVE_COLORSET[color_ix]))
 						except IndexError:
 							pass
-					elif start:
+					elif start != False:
 						delta = start-window_start
 						day = delta.days+1
 						ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=QUALITATIVE_COLORSET[color_ix]))
