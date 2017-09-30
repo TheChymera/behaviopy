@@ -285,9 +285,6 @@ def timetable(reference_df, x_key,
 					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
 
 	ax = ttp_style(ax, df_, rotate_xticks=True)
-	else:
-		ax = ttp_style(ax, df_, padding, rotate_xticks=False)
-		plt.xlabel("Days")
 	plt.ylabel(" ".join(x_key.split("_")).replace("id","ID"))
 
 	if save_as:
