@@ -43,8 +43,8 @@ def qualitative_times(df,
 		plt.style.use('ggplot')
 
 	ax = sns.pointplot(
-		x=time,
-		y=weight,
+		x=x,
+		y=y,
 		units=unit,
 		data=df,
 		hue=condition,
