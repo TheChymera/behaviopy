@@ -21,7 +21,7 @@ except (ValueError, SystemError):
 	from utils import *
 	from plot_utils import *
 
-import seaborn as sns
+import seaborn.apionly as sns
 
 QUALITATIVE_COLORSET = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 

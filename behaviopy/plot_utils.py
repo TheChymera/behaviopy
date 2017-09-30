@@ -1,6 +1,6 @@
 import collections
 import numpy as np
-import seaborn as sns
+import seaborn.apionly as sns
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib import rcParams
