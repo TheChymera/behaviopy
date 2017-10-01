@@ -66,6 +66,7 @@ def timetable(reference_df, x_key,
 	window_start="",
 	bp_style=True,
 	integer_dates=False,
+	quiet=False,
 	):
 	"""Plot a timetable
 
@@ -94,6 +95,8 @@ def timetable(reference_df, x_key,
 		A datetime-formatted string (e.g. "2016,12,18") to apply as the timetable end date (overrides autodetected end).
 	window_start : string
 		A datetime-formatted string (e.g. "2016,12,18") to apply as the timetable start date (overrides autodetected start).
+	quiet : bool, optional
+		Silence all non-severe warnings.
 	"""
 
 	if bp_style:
@@ -238,7 +241,8 @@ def timetable(reference_df, x_key,
 					active_dates = list(set(filtered_df[entry]))
 					df_.set_value(active_dates, x_val, 1)
 				except KeyError:
-					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_dates))
+					if not quiet:
+						print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_dates))
 	if integer_dates:
 		df_.index = df_.index.days.astype(int)
 	im = ax.pcolorfast(df_.T, cmap=ListedColormap(shade_colors), vmin=0, vmax=len(shade_colors)-1, alpha=.5)
@@ -284,7 +288,8 @@ def timetable(reference_df, x_key,
 				try:
 					active_date = list(set(filtered_df[entry]))[0]
 				except KeyError:
-					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
+					if not quiet:
+						print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
 				try:
 					active_date = dt.datetime.strptime(active_date.split(" ")[0], "%Y-%m-%d").date()
 				except AttributeError:
@@ -294,7 +299,8 @@ def timetable(reference_df, x_key,
 					day = delta.days+1
 					ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=draw_colors[color_ix]))
 				except (KeyError, TypeError):
-					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
+					if not quiet:
+						print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
 	if integer_dates:
 		plt.xlabel("Days")
 		ax = ttp_style(ax, df_, padding, rotate_xticks=False)
