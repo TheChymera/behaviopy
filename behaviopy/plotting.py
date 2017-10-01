@@ -117,12 +117,24 @@ def timetable(reference_df, x_key,
 		pass
 	if not window_start:
 		window_start = min(dates) - dt.timedelta(days=padding)
+	elif isinstance(window_start, int):
+		window_start = dt.timedelta(days=window_start)
 	else:
 		window_start = dt.datetime.strptime(window_start, "%Y,%m,%d").date()
 	if not window_end:
 		window_end = max(dates) + dt.timedelta(days=padding)
+	elif isinstance(window_end, int):
+		window_end = dt.timedelta(days=window_end)
 	else:
 		window_end = dt.datetime.strptime(window_end, "%Y,%m,%d").date()
+	try:
+		window_start = window_start.to_pytimedelta()
+	except AttributeError:
+		pass
+	try:
+		window_end = window_end.to_pytimedelta()
+	except AttributeError:
+		pass
 
 	#create generic plotting dataframe
 	x_vals = list(set(reference_df[x_key]))
@@ -283,8 +295,6 @@ def timetable(reference_df, x_key,
 					ax.add_patch(mpatches.Circle((day-0.5,x_ix+0.5), .25, ec="none", fc=draw_colors[color_ix]))
 				except (KeyError, TypeError):
 					print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
-
-	ax = ttp_style(ax, df_, rotate_xticks=True)
 	if integer_dates:
 		plt.xlabel("Days")
 		ax = ttp_style(ax, df_, padding, rotate_xticks=False)
