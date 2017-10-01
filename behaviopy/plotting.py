@@ -50,7 +50,6 @@ def qualitative_times(df,
 			for subkey in renames[key]:
 				df.loc[df[key] == subkey, key] = renames[key][subkey]
 
-
 	ax = sns.pointplot(
 		x=x,
 		y=y,
