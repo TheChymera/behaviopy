@@ -33,7 +33,10 @@ def qualitative_times(df,
 	err_style="unit_traces",
 	order=None,
 	bp_style=True,
-	save_as=''
+	save_as='',
+	legend_title=False,
+	palette=QUALITATIVE_COLORSET,
+	renames={},
 	):
 	"""Plot a timecourse based on qualitative times (e.g. sessions).
 	"""
@@ -41,6 +44,12 @@ def qualitative_times(df,
 	if bp_style:
 		plt.style.use(u'seaborn-darkgrid')
 		plt.style.use('ggplot')
+
+	if renames:
+		for key in renames:
+			for subkey in renames[key]:
+				df.loc[df[key] == subkey, key] = renames[key][subkey]
+
 
 	ax = sns.pointplot(
 		x=x,
@@ -51,6 +60,10 @@ def qualitative_times(df,
 		dodge=True,
 		order=order,
 		)
+
+	if not legend_title:
+		legend_title = ax.legend().set_title('')
+
 	if save_as:
 		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
@@ -435,8 +448,8 @@ def forced_swim_timecourse(df,
 	Parameters
 	----------
 
-        df : {pandas.Dataframe, string}
-        Pandas Dataframe containing the experimental data, or path pointing to a csv containing such data.
+	df : {pandas.Dataframe, string}
+	Pandas Dataframe containing the experimental data, or path pointing to a csv containing such data.
 
 	bp_style : bool, optional
 	Whether to apply the default behaviopy style.
@@ -481,5 +494,5 @@ def forced_swim_timecourse(df,
 	plt.legend(loc=legend_loc, frameon=True)
 
 	if save_as:
-                plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
+		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
