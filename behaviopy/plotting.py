@@ -64,6 +64,7 @@ def qualitative_times(df,
 		data=df,
 		hue=condition,
 		dodge=True,
+		palette=sns.color_palette(palette),
 		order=order,
 		)
 
