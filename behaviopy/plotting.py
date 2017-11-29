@@ -68,6 +68,8 @@ def qualitative_times(df,
 		order=order,
 		)
 
+	ax.set_ylabel(y)
+
 	if not legend_title:
 		legend_title = ax.legend().set_title('')
 
