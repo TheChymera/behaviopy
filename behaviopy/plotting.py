@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.patches as mpatches
 import pandas as pd #if pandas is imported before matplotlib.pyplot, errors such as `ImportError: Gtk3 backend requires pygobject to be installed.` have ensued.
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
 
 
 from os import path
@@ -28,6 +26,7 @@ import seaborn.apionly as sns
 QUALITATIVE_COLORSET = ["#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"]
 
 def qualitative_times(df,
+	ax=None,
 	x="relative_date",
 	y="weight",
 	unit="Animal_id",
@@ -44,6 +43,7 @@ def qualitative_times(df,
 	print_anova=False,
 	anova_type=3,
 	groups=None,
+	ci=95,
 	):
 	"""Plot a timecourse based on qualitative times (e.g. sessions).
 	"""
@@ -66,6 +66,8 @@ def qualitative_times(df,
 		dodge=True,
 		palette=sns.color_palette(palette),
 		order=order,
+		ax=ax,
+		ci=ci,
 		)
 
 	ax.set_ylabel(y)
@@ -77,6 +79,8 @@ def qualitative_times(df,
 		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
 	if model:
+		import statsmodels.api as sm
+		import statsmodels.formula.api as smf
 		model = model.format(value=y, condition=condition, unit=unit, session=x)
 		try:
 			regression_model = smf.mixedlm(model, data=df, groups=groups).fit()
