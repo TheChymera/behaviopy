@@ -78,24 +78,6 @@ def qualitative_times(df,
 	if save_as:
 		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
-	if model:
-		import statsmodels.api as sm
-		import statsmodels.formula.api as smf
-		model = model.format(value=y, condition=condition, unit=unit, session=x)
-		try:
-			regression_model = smf.mixedlm(model, data=df, groups=groups).fit()
-		except TypeError:
-			regression_model = smf.ols(model, data=df).fit()
-		if print_model:
-			print(regression_model.summary())
-
-		anova_summary = sm.stats.anova_lm(regression_model, typ=anova_type)
-		if print_anova:
-			print(anova_summary)
-		return anova_summary
-	else:
-		return
-
 def timetable(reference_df, x_key,
 	shade_colors=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
 	draw=[],
