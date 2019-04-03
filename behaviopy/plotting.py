@@ -224,7 +224,8 @@ def timetable(reference_df, x_key,
 					except KeyError:
 						pass
 	if integer_dates:
-		df_.index = df_.index.days.astype(int)
+		df_.index = pd.to_datetime(df_.index, errors='coerce')
+		df_.index = df_.index.day.astype(int)
 	im = ax.pcolorfast(df_.T, cmap=add_color(cm.gray_r, 0.8), alpha=.5)
 
 	#saturate frames
@@ -268,7 +269,8 @@ def timetable(reference_df, x_key,
 					if not quiet:
 						print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_dates))
 	if integer_dates:
-		df_.index = df_.index.days.astype(int)
+		df_.index = pd.to_datetime(df_.index, errors='coerce')
+		df_.index = df_.index.day.astype(int)
 	im = ax.pcolorfast(df_.T, cmap=ListedColormap(shade_colors), vmin=0, vmax=len(shade_colors)-1, alpha=.5)
 
 	#draw on top of frames
