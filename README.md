@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/TheChymera/behaviopy.svg?branch=master)](https://travis-ci.org/TheChymera/behaviopy)
 
-BehavioPy is a python toolkit providing evaluation (e.g. event tracking) and plotting functions for behavioural data.
+BehavioPy is a Python toolkit providing evaluation (e.g. event tracking) and plotting functions for behavioural data.
 Manual event tracking is done via a simple and configurable PsychoPy-based interface.
 Plotting functions are designed to work with preformatted data in CSV format (e.g. as exported by pandas), and use Seaborn and custom BehavioPy styles for maximum beautification.
 
