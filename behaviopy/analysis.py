@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from scipy import stats
+from scipy import special
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.cm as cm
@@ -40,7 +40,7 @@ def p_from_r(r,n):
 		prob = 0.0
 	else:
 		t_squared = r*r * (df / ((1.0 - r) * (1.0 + r)))
-		prob = stats.betai(0.5*df, 0.5, df / (df + t_squared))
+		prob = special.betainc(0.5*df, 0.5, df / (df + t_squared))
 	return prob
 
 def correlation_matrix(df_x_path,
