@@ -49,5 +49,5 @@ correlation_matrix(radioligand_df_path,
 	y_dict=BEHAVIOUR_ABBREV,
 	entries=animals,
 	output="p",
-	save_as="pet_behaviour_p.pdf"
+	save_as="petbehaviour_p.pdf"
 	)
