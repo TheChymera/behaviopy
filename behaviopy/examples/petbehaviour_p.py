@@ -9,7 +9,7 @@ behavior_df_path = path.join(data_dir,"DONOR.csv")
 
 rois = [
 	"amygdala",
-	"bfs", 
+	"bfs",
 	"brain stem",
 	"striatum",
 	"cerebellum",
