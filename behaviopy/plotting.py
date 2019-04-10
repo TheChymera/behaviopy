@@ -7,7 +7,7 @@ import matplotlib.cm as cm
 import matplotlib.patches as mpatches
 import pandas as pd #if pandas is imported before matplotlib.pyplot, errors such as `ImportError: Gtk3 backend requires pygobject to be installed.` have ensued.
 
-
+from copy import deepcopy
 from os import path
 from matplotlib import rcParams
 from matplotlib.colors import ListedColormap
@@ -275,14 +275,16 @@ def timetable(reference_df, x_key,
 
 	#draw on top of frames
 	for color_ix, entry in enumerate(draw):
+		print(color_ix, entry)
 		if not entry:
 			pass
 		for x_ix, x_val in enumerate(x_vals):
 			if isinstance(entry, dict):
 				for key in entry:
 					filtered_df = reference_df[(reference_df[key] == entry[key][0])&(reference_df[x_key] == x_val)]
+					filtered_df = deepcopy(filtered_df)
 					try:
-						start = list(set(filtered_df[entry[key][1]]))[0]
+						start = list(set(filtered_df[entry[key][1]].dropna()))[0]
 						try:
 							start = dt.datetime.strptime(start.split(" ")[0], "%Y-%m-%d").date()
 						except AttributeError:
@@ -311,9 +313,12 @@ def timetable(reference_df, x_key,
 					start=False
 			else:
 				filtered_df = reference_df[reference_df[x_key] == x_val]
+				filtered_df = deepcopy(filtered_df)
 				try:
-					active_date = list(set(filtered_df[entry]))[0]
-				except KeyError:
+					print(filtered_df[entry].dropna())
+					print(x_key,x_val)
+					active_date = list(set(filtered_df[entry].dropna()))[0]
+				except (IndexError, KeyError):
 					if not quiet:
 						print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
 				try:
