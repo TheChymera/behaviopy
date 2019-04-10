@@ -187,6 +187,11 @@ def timetable(reference_df, x_key,
 	for c_step, entry in enumerate(shade):
 		c_step += 1
 		for x_val in x_vals:
+			active_date=active_dates=[]
+			try:
+				death_date = list(reference_df.loc[reference_df[x_key]==x_val,'Animal_death_date'].dropna().unique())[0]
+			except IndexError:
+				death_date = None
 			if isinstance(entry, dict):
 				for key in entry:
 					start=False #unless the code below is succesful, no attempt is made to add an entry for the x_val
@@ -205,6 +210,8 @@ def timetable(reference_df, x_key,
 							end = dt.datetime.strptime(end.split(" ")[0], "%Y-%m-%d").date()
 						except AttributeError:
 							pass
+						if death_date and end > death_date:
+							end = death_date
 						active_dates = [i for i in perdelta(start,end+dt.timedelta(days=1),dt.timedelta(days=1))]
 						for active_date in active_dates:
 							df_.set_value(active_date, x_val, df_.get_value(active_date, x_val)+c_step)
@@ -233,6 +240,11 @@ def timetable(reference_df, x_key,
 	for c_step, entry in enumerate(saturate):
 		c_step += 1
 		for x_val in x_vals:
+			active_date=active_dates=[]
+			try:
+				death_date = list(reference_df.loc[reference_df[x_key]==x_val,'Animal_death_date'].dropna().unique())[0]
+			except IndexError:
+				death_date = None
 			if isinstance(entry, dict):
 				for key in entry:
 					filtered_df = reference_df[(reference_df[key] == entry[key][0])&(reference_df[x_key] == x_val)]
@@ -251,6 +263,8 @@ def timetable(reference_df, x_key,
 								end = dt.datetime.strptime(end.split(" ")[0], "%Y-%m-%d").date()
 							except AttributeError:
 								pass
+							if death_date and end > death_date:
+								end = death_date
 							active_dates = [i for i in perdelta(start,end+dt.timedelta(days=1),dt.timedelta(days=1))]
 							for active_date in active_dates:
 								df_.set_value(active_date, x_val, df_.get_value(active_date, x_val)+c_step)
@@ -275,10 +289,14 @@ def timetable(reference_df, x_key,
 
 	#draw on top of frames
 	for color_ix, entry in enumerate(draw):
-		print(color_ix, entry)
 		if not entry:
 			pass
 		for x_ix, x_val in enumerate(x_vals):
+			active_date=active_dates=[]
+			try:
+				death_date = list(reference_df.loc[reference_df[x_key]==x_val,'Animal_death_date'].dropna().unique())[0]
+			except IndexError:
+				death_date = None
 			if isinstance(entry, dict):
 				for key in entry:
 					filtered_df = reference_df[(reference_df[key] == entry[key][0])&(reference_df[x_key] == x_val)]
@@ -315,8 +333,6 @@ def timetable(reference_df, x_key,
 				filtered_df = reference_df[reference_df[x_key] == x_val]
 				filtered_df = deepcopy(filtered_df)
 				try:
-					print(filtered_df[entry].dropna())
-					print(x_key,x_val)
 					active_date = list(set(filtered_df[entry].dropna()))[0]
 				except (IndexError, KeyError):
 					if not quiet:
