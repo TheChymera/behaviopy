@@ -79,6 +79,7 @@ def qualitative_times(df,
 		plt.savefig(path.abspath(path.expanduser(save_as)), bbox_inches='tight')
 
 def timetable(reference_df, x_key,
+	auto_datetime_suffix='_date',
 	shade_colors=["0.9","#fff3a3","#a3e0ff","#ffa3ed","#ffa3a3"],
 	draw=[],
 	draw_colors=QUALITATIVE_COLORSET,
@@ -101,6 +102,8 @@ def timetable(reference_df, x_key,
 		Dataframe containing the data to plot. It needs to contain columns with datetime values.
 	x_key : string
 		Column from `reference_df` for the values in which to create rows in the timetable.
+	auto_datetime_suffix : bool, optional
+		Attempt convert columns ending in the suffix passed to this variable to datetime values (useful when using loaded data which is string typed).
 	bp_style : bool, optional
 		Whether to apply the default behaviopy style.
 	shade_colors : list
@@ -127,21 +130,23 @@ def timetable(reference_df, x_key,
 		plt.style.use(u'seaborn-darkgrid')
 		plt.style.use('ggplot')
 
-	#truncate dates
+	# Convert to datetime.
+	if auto_datetime_suffix:
+		for column_name in reference_df.columns:
+			if column_name.endswith(auto_datetime_suffix):
+				reference_df[column_name] =  pd.to_datetime(reference_df[column_name])
+
+	# Truncate dates.
 	for col in reference_df.columns:
 		if "date" in col:
-			#the following catches None entries:
+			# The following catches None entries:
 			try:
 				reference_df[col] = reference_df[col].apply(lambda x: x.date())
 			except AttributeError:
 				pass
 
-	#GET FIRST AND LAST DATE
+	# Get first and last date.
 	dates = get_dates(reference_df, [[i for i in shade if i], [i for i in saturate if i]])
-	try:
-		dates = [dt.datetime.strptime(i.split(" ")[0], "%Y-%m-%d").date() for i in dates]
-	except AttributeError:
-		pass
 	if not window_start:
 		window_start = min(dates) - dt.timedelta(days=padding)
 	elif isinstance(window_start, int):
@@ -163,7 +168,7 @@ def timetable(reference_df, x_key,
 	except AttributeError:
 		pass
 
-	#create generic plotting dataframe
+	# Create generic plotting dataframe.
 	x_vals = list(set(reference_df[x_key]))
 	x_vals = sorted(x_vals)
 	datetime_index = [i for i in perdelta(window_start,window_end,dt.timedelta(days=1))]
@@ -182,7 +187,7 @@ def timetable(reference_df, x_key,
 	else:
 		fig, ax = plt.subplots()
 
-	#shade frames
+	# Shade frames.
 	df_ = df.copy(deep=True)
 	for c_step, entry in enumerate(shade):
 		c_step += 1
@@ -194,7 +199,7 @@ def timetable(reference_df, x_key,
 				death_date = None
 			if isinstance(entry, dict):
 				for key in entry:
-					start=False #unless the code below is succesful, no attempt is made to add an entry for the x_val
+					start=False # Unless the code below is succesful, no attempt is made to add an entry for the x_val.
 					filtered_df = reference_df[(reference_df[key] == entry[key][0])&(reference_df[x_key] == x_val)]
 					try:
 						start = list(set(filtered_df[entry[key][1]]))[0]
@@ -206,10 +211,6 @@ def timetable(reference_df, x_key,
 						pass
 					if len(entry[key]) == 3:
 						end = list(set(filtered_df[entry[key][2]]))[0]
-						try:
-							end = dt.datetime.strptime(end.split(" ")[0], "%Y-%m-%d").date()
-						except AttributeError:
-							pass
 						if death_date and end > death_date:
 							end = death_date
 						active_dates = [i for i in perdelta(start,end+dt.timedelta(days=1),dt.timedelta(days=1))]
@@ -225,7 +226,7 @@ def timetable(reference_df, x_key,
 				except AttributeError:
 					pass
 				for active_date in active_dates:
-					#escaping dates which are outside the date range (e.g. when specifying tighter window_end and window_start contraints)
+					# Escaping dates which are outside the date range (e.g. when specifying tighter window_end and window_start contraints).
 					try:
 						df_.set_value(active_date, x_val, df_.get_value(active_date, x_val)+c_step)
 					except KeyError:
@@ -235,7 +236,7 @@ def timetable(reference_df, x_key,
 		df_.index = df_.index.day.astype(int)
 	im = ax.pcolorfast(df_.T, cmap=add_color(cm.gray_r, 0.8), alpha=.5)
 
-	#saturate frames
+	# Saturate frames.
 	df_ = df.copy(deep=True)
 	for c_step, entry in enumerate(saturate):
 		c_step += 1
@@ -259,10 +260,6 @@ def timetable(reference_df, x_key,
 					if len(entry[key]) == 3:
 						try:
 							end = list(set(filtered_df[entry[key][2]]))[0]
-							try:
-								end = dt.datetime.strptime(end.split(" ")[0], "%Y-%m-%d").date()
-							except AttributeError:
-								pass
 							if death_date and end > death_date:
 								end = death_date
 							active_dates = [i for i in perdelta(start,end+dt.timedelta(days=1),dt.timedelta(days=1))]
@@ -272,7 +269,7 @@ def timetable(reference_df, x_key,
 							pass
 					elif start:
 						df_.set_value(start, x_val, df_.get_value(start, x_val)+c_step)
-					# we need this to make sure start does not remain set for the next iteration:
+					# We need this to make sure start does not remain set for the next iteration:
 					start=False
 			else:
 				filtered_df = reference_df[reference_df[x_key] == x_val]
@@ -287,7 +284,7 @@ def timetable(reference_df, x_key,
 		df_.index = df_.index.day.astype(int)
 	im = ax.pcolorfast(df_.T, cmap=ListedColormap(shade_colors), vmin=0, vmax=len(shade_colors)-1, alpha=.5)
 
-	#draw on top of frames
+	# Draw on top of frames.
 	for color_ix, entry in enumerate(draw):
 		if not entry:
 			pass
@@ -303,19 +300,11 @@ def timetable(reference_df, x_key,
 					filtered_df = deepcopy(filtered_df)
 					try:
 						start = list(set(filtered_df[entry[key][1]].dropna()))[0]
-						try:
-							start = dt.datetime.strptime(start.split(" ")[0], "%Y-%m-%d").date()
-						except AttributeError:
-							pass
 					except IndexError:
 						pass
 					if len(entry[key]) == 3:
 						try:
 							end = list(set(filtered_df[entry[key][2]]))[0]
-							try:
-								end = dt.datetime.strptime(end.split(" ")[0], "%Y-%m-%d").date()
-							except AttributeError:
-								pass
 							active_dates = [i for i in perdelta(start,end+dt.timedelta(days=1),dt.timedelta(days=1))]
 							for active_date in active_dates:
 								delta = active_date-window_start
@@ -337,10 +326,6 @@ def timetable(reference_df, x_key,
 				except (IndexError, KeyError):
 					if not quiet:
 						print("WARNING: The {} column for entry {} has an unsupported value of {}".format(entry, x_val, active_date))
-				try:
-					active_date = dt.datetime.strptime(active_date.split(" ")[0], "%Y-%m-%d").date()
-				except AttributeError:
-					pass
 				try:
 					delta = active_date-window_start
 					day = delta.days+1
