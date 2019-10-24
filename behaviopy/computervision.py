@@ -32,18 +32,16 @@ class VideoProcessor():
     return imgs
 
 
-  def median_image(self,
+  def calculate_median_image(self,
                    imgs,
-                   ends):
-    return np.median(imgs[ends:int(len(imgs)-ends)])
+                   percentage_beginning_end = 0.1):
+    ends = int(float(len(imgs)) * percentage_beginning_end)
+    self.median_image = np.median(imgs[ends:int(len(imgs)-ends)],
+                                  axis=0)
 
   def background_correct_videos(self,
-                            imgs,
-                            percentage_beginning_end = 0.1):
-
-    ends = int(float(len(imgs))*percentage_beginning_end)
-    self.median_image = self.median_image(imgs,
-                                          ends)
+                            imgs):
+    self.calculate_median_image(imgs)
     imgs_corr = np.abs(imgs - self.median_image,
                        axis=0)
     return imgs_corr
@@ -69,7 +67,7 @@ class VideoProcessor():
     fail_idx = 0
     for idx, img in tqdm(enumerate(frames)):
       try:
-        center_of_mass, weighted_center_of_mass = self.extractCOM(img)
+        center_of_mass, weighted_center_of_mass = self.extract_com_frame(img)
         com_list.append(center_of_mass)
       except IndexError:
         fail_idx = idx
@@ -88,8 +86,10 @@ class VideoProcessor():
   def findRadius_circle(self,
                         images):
 
-      if not self.median_image:
-        self.median_image = self.median_image(images)
+      try:
+        self.median_image
+      except AttributeError:
+        self.calculate_median_image(images)
       edges = canny(self.median_image, sigma=0.2)
       hough_radii = np.arange(40,80,1)
       hough_res = hough_circle(edges, hough_radii)
@@ -113,13 +113,13 @@ class VideoProcessor():
 
     return np.asarray(labels)
 
-  def coordToPolar(x,y):
+  def coordToPolar(self, x,y):
     r = np.sqrt(x**2 + y**2)
     phi = math.atan2(x,y)
 
     return r, phi
 
-  def distance(x, y, x_prev, y_prev):
+  def distance(self, x, y, x_prev, y_prev):
     return np.sqrt((x - x_prev) ** 2 + (y - y_prev) ** 2)
 
   def to_polar(self, com_list,
@@ -169,7 +169,7 @@ def main():
     filename = video.split('_comp.mp4')[0][-5:]
 
     # load frames
-    frames = videoprocessor.load_video(video)
+    frames = videoprocessor.load_video(video)[:1000]
 
     # skip frames (animal handling, etc)
     frames_to_skip = 100
