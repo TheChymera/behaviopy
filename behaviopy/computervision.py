@@ -3,12 +3,13 @@ from tqdm import tqdm
 from glob import glob
 import math
 
-import skvideo
+from skvideo.io import vread
 import cv2
 from skimage.transform import pyramid_reduce, hough_circle, hough_circle_peaks
 from skimage.filters import threshold_otsu
 from skimage.measure import regionprops
 from skimage.feature import canny
+
 
 class VideoProcessor():
   def __init__(self):
@@ -19,12 +20,12 @@ class VideoProcessor():
                  to_grey = True,
                  downscale=2):
 
-    videodata = skvideo.io.vread(path)
+    videodata = vread(path)
     imgs = []
     for img in tqdm(videodata):
-      if(to_grey):
+      if to_grey:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-      if(downscale):
+      if downscale:
         img = pyramid_reduce(img, downscale=downscale)
       imgs.append(img)
     imgs = np.asarray(imgs)
@@ -32,17 +33,19 @@ class VideoProcessor():
 
 
   def median_image(self,
-                   imgs):
-    return np.median(imgs[ends:int(len(imgs)-ends)]
+                   imgs,
+                   ends):
+    return np.median(imgs[ends:int(len(imgs)-ends)])
 
   def background_correct_videos(self,
                             imgs,
                             percentage_beginning_end = 0.1):
 
     ends = int(float(len(imgs))*percentage_beginning_end)
-    self.median_image = self.median_image(imgs)
+    self.median_image = self.median_image(imgs,
+                                          ends)
     imgs_corr = np.abs(imgs - self.median_image,
-                       axis=0))
+                       axis=0)
     return imgs_corr
 
   def extract_com_frame(self,
@@ -85,7 +88,7 @@ class VideoProcessor():
   def findRadius_circle(self,
                         images):
 
-      if(not self.median_image):
+      if not self.median_image:
         self.median_image = self.median_image(images)
       edges = canny(self.median_image, sigma=0.2)
       hough_radii = np.arange(40,80,1)
@@ -93,7 +96,7 @@ class VideoProcessor():
       accums, cx, cy, radii = hough_circle_peaks(hough_res, hough_radii,
                                                  total_num_peaks=1)
       self.center_x, self.center_y, self.radius = cx[0], cy[0], radii[0]
-      self.inner_circle_radius = int(radius * 0.75)
+      self.inner_circle_radius = int(self.radius * 0.75)
 
       return self.inner_circle_radius
 
@@ -103,7 +106,7 @@ class VideoProcessor():
     labels = []
     for com in tqdm(com_list):
         norm = (com[1]-self.center_x)**2 + (com[0]-self.center_y)**2
-        if(norm < self.inner_circle_radius**2):
+        if norm < self.inner_circle_radius**2:
             labels.append(1)
         else:
             labels.append(0)
@@ -131,34 +134,41 @@ class VideoProcessor():
     x = x/self.radius
     y = y/self.radius
 
-    distances = []
-    distances.append(0.0)
+    distances = [0.0]
     r = []
     phi = []
     for idx, el in enumerate(x):
         _r, _phi = self.coordToPolar(x[idx], y[idx])
         r.append(_r)
         phi.append(_phi)
-        if(idx==0):
+        if idx==0:
             continue
         else:
             new_dist = self.distance(x[idx],y[idx], x[idx-1],y[idx-1])
             distances.append(distances[-1] + new_dist)
     r = np.asarray(r)
-    if(normalize):
+    if normalize:
       r = r/self.radius
     return r, np.asarray(phi), np.asarray(distances)
 
 
 def main():
-  basic_path = '/media/nexus/storage/christian_behavior_data/mp4s/OFT/view_2_comp/'
+  basic_path    = '/media/nexus/storage/christian_behavior_data/mp4s/OFT/view_2_comp/'
+  results_path  = '/media/nexus/storage/christian_behavior_data/results/'
 
   videoprocessor = VideoProcessor()
   videos = videoprocessor.get_videos(basic_path)
 
+  # process only part of the videos for testing
+  videos = videos[:2]
+
   # now process all videos:
   for video in videos:
 
+    # adjust here for your specific filename
+    filename = video.split('_comp.mp4')[0][-5:]
+
+    # load frames
     frames = videoprocessor.load_video(video)
 
     # skip frames (animal handling, etc)
@@ -176,6 +186,18 @@ def main():
 
     # convert coordinates to polar coordinates
     r, phi, distances = videoprocessor.to_polar(com_list)
+
+    # save results
+    results = {
+      'labels'        : labels,
+      'com_list'      : com_list,
+      'radii'         : r,
+      'phi'           : phi,
+      'distances'     : distances,
+      'inner_radius'  : inner_circle_radius,
+    }
+
+    np.save(results_path + filename + '_videoprocessing_results.npy', results)
 
 
 if __name__ == "__main__":
