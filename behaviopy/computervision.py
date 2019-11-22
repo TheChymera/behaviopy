@@ -122,6 +122,16 @@ class VideoProcessor():
   def distance(self, x, y, x_prev, y_prev):
     return np.sqrt((x - x_prev) ** 2 + (y - y_prev) ** 2)
 
+  def calculate_speed(self,
+                      distances):
+      x = range(0, len(distances))
+      y = distances
+      dx = np.diff(x)
+      dy = np.diff(y)
+      d = dy / dx
+
+      return d
+
   def to_polar(self, com_list,
                normalize=True):
 
@@ -187,6 +197,9 @@ def main():
     # convert coordinates to polar coordinates
     r, phi, distances = videoprocessor.to_polar(com_list)
 
+    # calculate speed
+    speed = videoprocessor.calculate_speed(distances)
+
     # save results
     results = {
       'labels'        : labels,
@@ -194,6 +207,7 @@ def main():
       'radii'         : r,
       'phi'           : phi,
       'distances'     : distances,
+      'speed'         : speed,
       'inner_radius'  : inner_circle_radius,
     }
 
