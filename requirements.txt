@@ -9,3 +9,4 @@ scikit-video
 scikit-image
 opencv-python
 tqdm
+ffmpeg

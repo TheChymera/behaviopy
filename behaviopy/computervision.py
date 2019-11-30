@@ -1,6 +1,7 @@
 import math
 import subprocess
 from glob import glob
+import os
 
 import cv2
 import ffmpeg
@@ -92,8 +93,7 @@ class VideoProcessor():
   def background_correct_videos(self,
                                 imgs):
     self.calculate_median_image(imgs)
-    imgs_corr = np.abs(imgs - self.median_image,
-                       axis=0)
+    imgs_corr = np.abs(imgs - self.median_image)
     return imgs_corr
 
   def extract_com_frame(self,
@@ -219,12 +219,12 @@ class VideoProcessor():
       r = r / self.radius
     return r, np.asarray(phi), np.asarray(distances)
 
-  def mkv_to_mp4(self, videos,
+  def mkv_to_avi(self, videos,
                  avi_path):
     for video in tqdm(videos):
       id = video.split('.')[0].split('/')[-1]
 
-      command = 'ffmpeg -i ' + video + ' -s 256x256 -b 512k -flags global_header -vcodec mpeg1video -acodec copy ' + avi_path + id + '.avi'
+      command = 'ffmpeg -i ' + video + ' -vf scale=256:-1 -b 512k -flags global_header -vcodec mpeg1video -acodec copy ' + avi_path + id + '.avi'
 
       fixed_but_fugly = subprocess.run(command,
                                        shell=True,
@@ -234,8 +234,9 @@ class VideoProcessor():
 
 
 def main():
+
+  # adjust paths here
   basic_path_mkv = '/media/nexus/storage/christian_behavior_data/mkvs/'
-  # basic_path_mp4 = '/media/nexus/storage/christian_behavior_data/mp4s/OFT/view_2_comp/'
   basic_path_avi = '/media/nexus/storage/christian_behavior_data/avi_oft_test/'
   results_path = '/media/nexus/storage/christian_behavior_data/results/'
 
@@ -246,32 +247,32 @@ def main():
                                      format='mkv',
                                      behavior='OFT')
 
-  import os
   if not os.path.exists(basic_path_avi):
     os.makedirs(basic_path_avi)
+    # convert videos
+    print('converting videos')
+    videoprocessor.mkv_to_avi(videos, basic_path_avi)
 
-  # convert videos
-  videoprocessor.mkv_to_mp4(videos, basic_path_avi)
+  if not os.path.exists(results_path):
+    os.makedirs(results_path)
 
-  videos = videoprocessor.get_videos(basic_path_avi)
-
-  # process only part of the videos for testing
-  videos = videos[:2]
+  videos = videoprocessor.get_videos(basic_path_avi,
+                                     format='avi')
 
   # now process all videos:
-  for video in videos:
+  for video in tqdm(videos):
     # adjust here for your specific filename
-    filename = video.split('_comp.mp4')[0][-5:]
+    filename = video.split('.avi')[0].split('_')[-1]
+    print('filename')
 
     # load frames
-    frames = videoprocessor.load_video(video)[:100]
+    frames = videoprocessor.load_video(video)
 
-    # skip frames (animal handling, etc)
-    frames_to_skip = 100
-    frames = frames[:frames_to_skip]
+    # create background substracted images
+    corrected_imgs = videoprocessor.background_correct_videos(frames)
 
     # extract center of masses
-    frames, com_list = videoprocessor.extract_com_frames(frames)
+    frames, com_list = videoprocessor.extract_com_frames(corrected_imgs)
 
     # detect radius for circular open field and calculate radius
     inner_circle_radius = videoprocessor.findRadius_circle(frames)
@@ -294,6 +295,7 @@ def main():
       'distances': distances,
       'speed': speed,
       'inner_radius': inner_circle_radius,
+      'example_frame' : frames[50],
     }
 
     np.save(results_path + filename + '_videoprocessing_results.npy', results)
