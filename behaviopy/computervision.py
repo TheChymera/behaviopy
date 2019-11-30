@@ -61,6 +61,14 @@ oft_filenames = [
   'nd750_a0142']
 
 
+def load_results(path):
+  """
+  Load pickled results from videoprocessing session
+  :param path: path to .npy file from one video
+  :return: results dictionary
+  """
+  return np.load(path, allow_pickle=True).item()
+
 class VideoProcessor():
   def __init__(self):
     pass
