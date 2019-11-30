@@ -4,7 +4,6 @@ from glob import glob
 import os
 
 import cv2
-import ffmpeg
 import numpy as np
 from skimage.feature import canny
 from skimage.filters import threshold_otsu
@@ -26,7 +25,6 @@ oft_filenames = [
   'nd750_a0082',
   'nd750_a0083',
   'nd750_a0084',
-  ### neue kamera
   'nd750_a0087',
   'nd750_a0088',
   'nd750_a0089',
@@ -226,10 +224,9 @@ class VideoProcessor():
 
       command = 'ffmpeg -i ' + video + ' -vf scale=256:-1 -b 512k -flags global_header -vcodec mpeg1video -acodec copy ' + avi_path + id + '.avi'
 
-      fixed_but_fugly = subprocess.run(command,
-                                       shell=True,
-                                       # Probably don't forget these, too
-                                       check=True, text=True)
+      res = subprocess.run(command,
+                           shell=True,
+                           check=True, text=True)
     pass
 
 
@@ -295,7 +292,7 @@ def main():
       'distances': distances,
       'speed': speed,
       'inner_radius': inner_circle_radius,
-      'example_frame' : frames[50],
+      'example_frame' : frames[500],
     }
 
     np.save(results_path + filename + '_videoprocessing_results.npy', results)
