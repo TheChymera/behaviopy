@@ -240,10 +240,12 @@ class VideoProcessor():
 
 def main():
 
+  data_root = '/mnt/data/data/cameras/nd750/a'
   # adjust paths here
-  basic_path_mkv = '/media/nexus/storage/christian_behavior_data/mkvs/'
-  basic_path_avi = '/media/nexus/storage/christian_behavior_data/avi_oft_test/'
-  results_path = '/media/nexus/storage/christian_behavior_data/results/'
+  #basic_path_mkv = '/media/nexus/storage/christian_behavior_data/mkvs/'
+  basic_path_mkv = '/mnt/data/data/cameras/nd750/a/'
+  basic_path_avi = './scratch/behaviopy/'
+  results_path = './scratch/behaviopy_results/'
 
   videoprocessor = VideoProcessor()
 
